@@ -1,0 +1,59 @@
+{
+  "kind": "collectionType",
+  "collectionName": "player_profiles",
+  "info": {
+    "singularName": "player-profile",
+    "pluralName": "player-profiles",
+    "displayName": "player_profile"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "name": {
+      "type": "string"
+    },
+    "role": {
+      "type": "enumeration",
+      "enum": [
+        "Batsman",
+        "Bowler",
+        "All-rounder",
+        "Wicketkeeper"
+      ]
+    },
+    "battingStyle": {
+      "type": "string"
+    },
+    "bowlingStyle": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "stats": {
+      "type": "json",
+      "default": {}
+    },
+    "availability": {
+      "type": "boolean",
+      "default": false
+    },
+    "profile_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    }
+  }
+}
