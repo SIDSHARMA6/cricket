@@ -1,0 +1,57 @@
+{
+  "kind": "collectionType",
+  "collectionName": "polls",
+  "info": {
+    "singularName": "poll",
+    "pluralName": "polls",
+    "displayName": "Poll",
+    "description": "Community polls for cricket discussions"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "question": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "options": {
+      "type": "json",
+      "required": true
+    },
+    "creator": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": true
+    },
+    "match": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::match.match"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "allowMultipleVotes": {
+      "type": "boolean",
+      "default": false
+    },
+    "expiresAt": {
+      "type": "datetime"
+    },
+    "totalVotes": {
+      "type": "integer",
+      "default": 0
+    },
+    "isAnonymous": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

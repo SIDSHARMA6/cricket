@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "poll_responses",
+  "info": {
+    "singularName": "poll-response",
+    "pluralName": "poll-responses",
+    "displayName": "Poll Response",
+    "description": "User responses to polls"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "poll": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::poll.poll",
+      "required": true
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": true
+    },
+    "selectedOptions": {
+      "type": "json",
+      "required": true
+    },
+    "comment": {
+      "type": "text"
+    }
+  }
+}
