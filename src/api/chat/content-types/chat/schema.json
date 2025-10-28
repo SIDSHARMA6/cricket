@@ -4,11 +4,69 @@
   "info": {
     "singularName": "chat",
     "pluralName": "chats",
-    "displayName": "chat"
+    "displayName": "Community Chat",
+    "description": "Community chat for all registered cricket players"
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
-  "attributes": {}
+  "attributes": {
+    "message": {
+      "type": "text",
+      "required": true
+    },
+    "sender": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": true
+    },
+    "messageType": {
+      "type": "enumeration",
+      "enum": ["text", "image", "video", "audio", "file", "match_invite", "celebration"],
+      "default": "text"
+    },
+    "attachments": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": ["images", "videos", "audios", "files"]
+    },
+    "replyTo": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::chat.chat"
+    },
+    "reactions": {
+      "type": "json",
+      "default": {}
+    },
+    "mentions": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user"
+    },
+    "isEdited": {
+      "type": "boolean",
+      "default": false
+    },
+    "editedAt": {
+      "type": "datetime"
+    },
+    "isDeleted": {
+      "type": "boolean",
+      "default": false
+    },
+    "deletedAt": {
+      "type": "datetime"
+    },
+    "matchReference": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::match.match"
+    },
+    "tags": {
+      "type": "json"
+    }
+  }
 }

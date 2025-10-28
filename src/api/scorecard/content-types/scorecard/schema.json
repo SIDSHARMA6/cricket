@@ -1,0 +1,77 @@
+{
+  "kind": "collectionType",
+  "collectionName": "scorecards",
+  "info": {
+    "singularName": "scorecard",
+    "pluralName": "scorecards",
+    "displayName": "Scorecard",
+    "description": "Match scorecards and statistics"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "match": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::match.match",
+      "required": true
+    },
+    "teamA": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::team.team"
+    },
+    "teamB": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::team.team"
+    },
+    "tossWinner": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::team.team"
+    },
+    "tossDecision": {
+      "type": "enumeration",
+      "enum": ["bat", "bowl"],
+      "default": "bat"
+    },
+    "innings": {
+      "type": "component",
+      "component": "cricket.innings",
+      "repeatable": true
+    },
+    "winner": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::team.team"
+    },
+    "winMargin": {
+      "type": "string"
+    },
+    "manOfTheMatch": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "umpires": {
+      "type": "json"
+    },
+    "weather": {
+      "type": "string"
+    },
+    "pitchCondition": {
+      "type": "enumeration",
+      "enum": ["Excellent", "Good", "Average", "Poor"],
+      "default": "Good"
+    },
+    "matchSummary": {
+      "type": "text"
+    },
+    "highlights": {
+      "type": "json"
+    }
+  }
+}

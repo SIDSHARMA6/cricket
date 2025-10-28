@@ -1,0 +1,34 @@
+{
+  "collectionName": "components_cricket_achievements",
+  "info": {
+    "displayName": "Achievement",
+    "description": "Player achievements and awards"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "achievedDate": {
+      "type": "date"
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["batting", "bowling", "fielding", "team", "tournament", "milestone"],
+      "default": "milestone"
+    },
+    "badge": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "points": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

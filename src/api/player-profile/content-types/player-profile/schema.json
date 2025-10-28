@@ -4,51 +4,89 @@
   "info": {
     "singularName": "player-profile",
     "pluralName": "player-profiles",
-    "displayName": "player_profile"
+    "displayName": "Player Profile",
+    "description": "Cricket player profiles and statistics"
   },
   "options": {
     "draftAndPublish": true
   },
   "pluginOptions": {},
   "attributes": {
-    "Name": {
-      "type": "string"
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "displayName": {
+      "type": "string",
+      "required": true
     },
     "age": {
-      "type": "integer"
+      "type": "integer",
+      "min": 10,
+      "max": 80
     },
     "birthday": {
-      "type": "string"
+      "type": "date"
     },
     "role": {
       "type": "enumeration",
-      "enum": [
-        "Batsmen",
-        "Bowler",
-        "All-rounder"
-      ]
+      "enum": ["Batsman", "Bowler", "All-rounder", "Wicket-keeper", "Captain"],
+      "required": true
     },
-    "Team_role": {
+    "battingStyle": {
       "type": "enumeration",
-      "enum": [
-        "Bdia player",
-        "Ghatia player",
-        "Single lene wala",
-        "Chakke marne wala"
-      ]
+      "enum": ["Right-handed", "Left-handed"]
     },
-    "Highest_score": {
+    "bowlingStyle": {
+      "type": "enumeration",
+      "enum": ["Right-arm fast", "Left-arm fast", "Right-arm medium", "Left-arm medium", "Right-arm spin", "Left-arm spin", "Leg-spin", "Off-spin"]
+    },
+    "skillLevel": {
+      "type": "enumeration",
+      "enum": ["Beginner", "Intermediate", "Advanced", "Professional"],
+      "default": "Beginner"
+    },
+    "location": {
       "type": "string"
     },
-    "Player_image": {
+    "bio": {
+      "type": "text"
+    },
+    "profileImage": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ]
+      "allowedTypes": ["images"]
+    },
+    "stats": {
+      "type": "component",
+      "component": "cricket.player-stats",
+      "repeatable": false
+    },
+    "achievements": {
+      "type": "component",
+      "component": "cricket.achievement",
+      "repeatable": true
+    },
+    "isAvailable": {
+      "type": "boolean",
+      "default": true
+    },
+    "rating": {
+      "type": "decimal",
+      "default": 0,
+      "min": 0,
+      "max": 5
+    },
+    "totalMatches": {
+      "type": "integer",
+      "default": 0
+    },
+    "phoneNumber": {
+      "type": "string"
+    },
+    "emergencyContact": {
+      "type": "string"
     }
   }
 }

@@ -1,0 +1,50 @@
+{
+  "collectionName": "components_cricket_team_stats",
+  "info": {
+    "displayName": "Team Stats",
+    "description": "Team performance statistics"
+  },
+  "options": {},
+  "attributes": {
+    "matchesPlayed": {
+      "type": "integer",
+      "default": 0
+    },
+    "matchesWon": {
+      "type": "integer",
+      "default": 0
+    },
+    "matchesLost": {
+      "type": "integer",
+      "default": 0
+    },
+    "matchesDrawn": {
+      "type": "integer",
+      "default": 0
+    },
+    "winPercentage": {
+      "type": "decimal",
+      "default": 0
+    },
+    "totalRuns": {
+      "type": "integer",
+      "default": 0
+    },
+    "totalWickets": {
+      "type": "integer",
+      "default": 0
+    },
+    "highestScore": {
+      "type": "integer",
+      "default": 0
+    },
+    "lowestScore": {
+      "type": "integer",
+      "default": 0
+    },
+    "tournamentsWon": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

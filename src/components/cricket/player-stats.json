@@ -1,0 +1,65 @@
+{
+  "collectionName": "components_cricket_player_stats",
+  "info": {
+    "displayName": "Player Stats",
+    "description": "Cricket player statistics"
+  },
+  "options": {},
+  "attributes": {
+    "matchesPlayed": {
+      "type": "integer",
+      "default": 0
+    },
+    "runsScored": {
+      "type": "integer",
+      "default": 0
+    },
+    "highestScore": {
+      "type": "integer",
+      "default": 0
+    },
+    "average": {
+      "type": "decimal",
+      "default": 0
+    },
+    "strikeRate": {
+      "type": "decimal",
+      "default": 0
+    },
+    "centuries": {
+      "type": "integer",
+      "default": 0
+    },
+    "halfCenturies": {
+      "type": "integer",
+      "default": 0
+    },
+    "wicketsTaken": {
+      "type": "integer",
+      "default": 0
+    },
+    "bowlingAverage": {
+      "type": "decimal",
+      "default": 0
+    },
+    "economyRate": {
+      "type": "decimal",
+      "default": 0
+    },
+    "bestBowling": {
+      "type": "string"
+    },
+    "catches": {
+      "type": "integer",
+      "default": 0
+    },
+    "stumpings": {
+      "type": "integer",
+      "default": 0
+    },
+    "runOuts": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

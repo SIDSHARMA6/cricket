@@ -1,0 +1,52 @@
+{
+  "collectionName": "components_cricket_innings",
+  "info": {
+    "displayName": "Innings",
+    "description": "Cricket innings details"
+  },
+  "options": {},
+  "attributes": {
+    "battingTeam": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::team.team"
+    },
+    "bowlingTeam": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::team.team"
+    },
+    "totalRuns": {
+      "type": "integer",
+      "default": 0
+    },
+    "totalWickets": {
+      "type": "integer",
+      "default": 0
+    },
+    "totalOvers": {
+      "type": "decimal",
+      "default": 0
+    },
+    "extras": {
+      "type": "integer",
+      "default": 0
+    },
+    "runRate": {
+      "type": "decimal",
+      "default": 0
+    },
+    "battingStats": {
+      "type": "json"
+    },
+    "bowlingStats": {
+      "type": "json"
+    },
+    "fallOfWickets": {
+      "type": "json"
+    },
+    "partnerships": {
+      "type": "json"
+    }
+  }
+}

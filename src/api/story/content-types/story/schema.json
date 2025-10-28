@@ -4,22 +4,59 @@
   "info": {
     "singularName": "story",
     "pluralName": "stories",
-    "displayName": "story"
+    "displayName": "Story",
+    "description": "Cricket stories and highlights"
   },
   "options": {
     "draftAndPublish": true
   },
   "pluginOptions": {},
   "attributes": {
-    "story": {
+    "title": {
+      "type": "string"
+    },
+    "content": {
+      "type": "text"
+    },
+    "media": {
       "type": "media",
-      "multiple": false,
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ]
+      "multiple": true,
+      "allowedTypes": ["images", "videos"]
+    },
+    "author": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": true
+    },
+    "match": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::match.match"
+    },
+    "storyType": {
+      "type": "enumeration",
+      "enum": ["highlight", "moment", "achievement", "funny", "training"],
+      "default": "moment"
+    },
+    "tags": {
+      "type": "json"
+    },
+    "likes": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user"
+    },
+    "views": {
+      "type": "integer",
+      "default": 0
+    },
+    "isPublic": {
+      "type": "boolean",
+      "default": true
+    },
+    "expiresAt": {
+      "type": "datetime"
     }
   }
 }
