@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "matches",
+  "info": {
+    "singularName": "match",
+    "pluralName": "matches",
+    "displayName": "match"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Ground_name": {
+      "type": "string"
+    },
+    "Money": {
+      "type": "string"
+    },
+    "schedule": {
+      "type": "datetime"
+    },
+    "total_Players_need": {
+      "type": "string"
+    }
+  }
+}

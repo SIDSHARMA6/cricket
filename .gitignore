@@ -122,6 +122,8 @@ coverage
 ############################
 
 .env
+.env.local
+.env.production
 license.txt
 exports
 .strapi
@@ -129,3 +131,18 @@ dist
 build
 .strapi-updater.json
 .strapi-cloud.json
+
+############################
+# Database
+############################
+
+*.db
+*.sqlite
+*.sqlite3
+database/
+
+############################
+# Production
+############################
+
+ecosystem.config.js

@@ -34,11 +34,42 @@ yarn build
 
 ## ⚙️ Deployment
 
-Strapi gives you many possible deployment options for your project including [Strapi Cloud](https://cloud.strapi.io). Browse the [deployment section of the documentation](https://docs.strapi.io/dev-docs/deployment) to find the best solution for your use case.
+### Render Deployment
 
+This project is configured for deployment on Render with PostgreSQL database.
+
+#### Prerequisites
+1. Create a Render account at [render.com](https://render.com)
+2. Generate production environment variables
+
+#### Environment Variables Setup
+Generate secure keys for production:
+```bash
+# Generate random strings for these variables:
+APP_KEYS=key1,key2,key3,key4
+API_TOKEN_SALT=your-random-string
+ADMIN_JWT_SECRET=your-jwt-secret
+TRANSFER_TOKEN_SALT=your-transfer-salt
+JWT_SECRET=your-jwt-secret
+ENCRYPTION_KEY=your-encryption-key
 ```
-yarn strapi deploy
+
+#### Deployment Steps
+1. Push your code to GitHub
+2. Connect your GitHub repository to Render
+3. Create a PostgreSQL database service on Render
+4. Create a web service using the `render.yaml` configuration
+5. Set the required environment variables in Render dashboard
+6. Deploy!
+
+#### Manual Deployment
+Alternatively, you can deploy manually:
+```bash
+npm run build
+npm start
 ```
+
+For other deployment options, browse the [deployment section of the documentation](https://docs.strapi.io/dev-docs/deployment).
 
 ## 📚 Learn more
 

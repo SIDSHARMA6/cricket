@@ -1,0 +1,54 @@
+{
+  "kind": "collectionType",
+  "collectionName": "player_profiles",
+  "info": {
+    "singularName": "player-profile",
+    "pluralName": "player-profiles",
+    "displayName": "player_profile"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Name": {
+      "type": "string"
+    },
+    "age": {
+      "type": "integer"
+    },
+    "birthday": {
+      "type": "string"
+    },
+    "role": {
+      "type": "enumeration",
+      "enum": [
+        "Batsmen",
+        "Bowler",
+        "All-rounder"
+      ]
+    },
+    "Team_role": {
+      "type": "enumeration",
+      "enum": [
+        "Bdia player",
+        "Ghatia player",
+        "Single lene wala",
+        "Chakke marne wala"
+      ]
+    },
+    "Highest_score": {
+      "type": "string"
+    },
+    "Player_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    }
+  }
+}

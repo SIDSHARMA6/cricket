@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: strapi-app
+    env: node
+    plan: starter
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_CLIENT
+        value: postgres
+      - key: DATABASE_SSL
+        value: true
+      - key: DATABASE_SSL_REJECT_UNAUTHORIZED
+        value: false
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 10000
+    
+  - type: pserv
+    name: strapi-postgres
+    env: postgres
+    plan: starter
+    databaseName: strapi
+    databaseUser: strapi
