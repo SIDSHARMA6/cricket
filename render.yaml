@@ -18,6 +18,10 @@ services:
         value: 0.0.0.0
       - key: PORT
         value: 10000
+      - key: PUBLIC_URL
+        value: https://cricket-d5rd.onrender.com
+      - key: PUBLIC_ADMIN_URL
+        value: https://cricket-d5rd.onrender.com/admin
     
   - type: pserv
     name: strapi-postgres

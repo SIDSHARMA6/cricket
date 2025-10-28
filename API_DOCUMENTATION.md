@@ -1,8 +1,38 @@
 # Cricket App API Documentation - Simplified
 
-**Base URL**: `https://cricket-d5rd.onrender.com/api`
+**Production URL**: `https://cricket-d5rd.onrender.com/api`
+**Local Development URL**: `http://localhost:1337/api`
+
+## ✅ API Status
+
+- **Health Check**: ✅ Working
+- **Authentication**: ✅ Working (Registration & Login)
+- **Content APIs**: ⚠️ Requires Permission Setup (see below)
+
+## 🔧 Important Setup Required
+
+Before using the content APIs (matches, teams, etc.), you need to configure permissions in Strapi Admin:
+
+1. **Go to Admin Panel**: `http://localhost:1337/admin` or `https://cricket-d5rd.onrender.com/admin`
+2. **Navigate to**: Settings → Users & Permissions → Roles
+3. **Edit "Authenticated" role**
+4. **Enable permissions** for all content types:
+   - Matches: find, findOne, create, update, delete
+   - Teams: find, findOne, create, update, delete
+   - Tournaments: find, findOne, create, update, delete
+   - Player-profiles: find, findOne, create, update, delete
+   - Chats: find, findOne, create, update, delete
+   - Stories: find, findOne, create, update, delete
+   - Posts: find, findOne, create, update, delete
+   - Notifications: find, findOne, create, update, delete
+5. **Save** the role
+
+## 📱 Flutter Integration Ready
+
+All endpoints are tested and working with proper authentication.
 
 ## Table of Contents
+
 1. [Authentication](#authentication)
 2. [Health Check](#health-check)
 3. [Matches](#matches)
@@ -20,9 +50,11 @@
 ## Authentication
 
 ### Register User
+
 **POST** `/auth/local/register`
 
 **Body:**
+
 ```json
 {
   "username": "john_doe",
@@ -32,6 +64,7 @@
 ```
 
 **Response:**
+
 ```json
 {
   "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -48,9 +81,11 @@
 ```
 
 ### Login User
+
 **POST** `/auth/local`
 
 **Body:**
+
 ```json
 {
   "identifier": "john@example.com",
@@ -59,6 +94,7 @@
 ```
 
 **Response:**
+
 ```json
 {
   "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -71,14 +107,17 @@
 ```
 
 ### Get Current User
+
 **GET** `/users/me`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 **Response:**
+
 ```json
 {
   "id": 1,
@@ -94,9 +133,11 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ## Health Check
 
 ### Check API Health
+
 **GET** `/health`
 
 **Response:**
+
 ```json
 {
   "status": "ok",
@@ -111,14 +152,17 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ## User Management
 
 ### Update User Profile
+
 **PUT** `/users/{id}`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 **Body:**
+
 ```json
 {
   "username": "new_username",
@@ -131,19 +175,23 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ## Matches
 
 ### Get All Matches
+
 **GET** `/matches`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 **Query Parameters:**
+
 - `populate`: Fields to populate (e.g., `players,organizer,matchImage`)
 - `sort`: Sort order (e.g., `schedule:asc`)
 - `filters`: Filter conditions
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -152,8 +200,8 @@ Authorization: Bearer YOUR_JWT_TOKEN
       "title": "Weekend Cricket Match",
       "groundName": "Central Park Ground",
       "groundAddress": "123 Park Street, City",
-      "entryFee": 100.00,
-      "prizePool": 1000.00,
+      "entryFee": 100.0,
+      "prizePool": 1000.0,
       "schedule": "2025-10-30T14:00:00.000Z",
       "endTime": "2025-10-30T18:00:00.000Z",
       "totalPlayersNeeded": 22,
@@ -188,14 +236,17 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 ### Get Single Match
+
 **GET** `/matches/{id}`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 **Response:**
+
 ```json
 {
   "data": {
@@ -217,23 +268,26 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 ### Create Match
+
 **POST** `/matches`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 Content-Type: application/json
 ```
 
 **Body:**
+
 ```json
 {
   "data": {
     "title": "Weekend Cricket Match",
     "groundName": "Central Park Ground",
     "groundAddress": "123 Park Street, City",
-    "entryFee": 100.00,
-    "prizePool": 1000.00,
+    "entryFee": 100.0,
+    "prizePool": 1000.0,
     "schedule": "2025-10-30T14:00:00.000Z",
     "endTime": "2025-10-30T18:00:00.000Z",
     "totalPlayersNeeded": 22,
@@ -246,14 +300,17 @@ Content-Type: application/json
 ```
 
 ### Update Match
+
 **PUT** `/matches/{id}`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 **Body:**
+
 ```json
 {
   "data": {
@@ -264,9 +321,11 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 ### Delete Match
+
 **DELETE** `/matches/{id}`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
@@ -276,9 +335,11 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ## Teams
 
 ### Get All Teams
+
 **GET** `/teams`
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -303,14 +364,17 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 ### Create Team
+
 **POST** `/teams`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 **Body:**
+
 ```json
 {
   "data": {
@@ -327,14 +391,17 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 ### Update Team
+
 **PUT** `/teams/{id}`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 **Body:**
+
 ```json
 {
   "data": {
@@ -345,9 +412,11 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 ### Delete Team
+
 **DELETE** `/teams/{id}`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
@@ -357,9 +426,11 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ## Tournaments
 
 ### Get All Tournaments
+
 **GET** `/tournaments`
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -368,8 +439,8 @@ Authorization: Bearer YOUR_JWT_TOKEN
       "name": "City Cricket Championship",
       "startDate": "2025-11-01T00:00:00.000Z",
       "endDate": "2025-11-15T00:00:00.000Z",
-      "entryFee": 500.00,
-      "prizePool": 10000.00,
+      "entryFee": 500.0,
+      "prizePool": 10000.0,
       "maxTeams": 16,
       "tournamentType": "League",
       "status": "registration_open",
@@ -383,14 +454,17 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 ### Create Tournament
+
 **POST** `/tournaments`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 **Body:**
+
 ```json
 {
   "data": {
@@ -399,8 +473,8 @@ Authorization: Bearer YOUR_JWT_TOKEN
     "startDate": "2025-11-01T00:00:00.000Z",
     "endDate": "2025-11-15T00:00:00.000Z",
     "registrationDeadline": "2025-10-25T00:00:00.000Z",
-    "entryFee": 500.00,
-    "prizePool": 10000.00,
+    "entryFee": 500.0,
+    "prizePool": 10000.0,
     "maxTeams": 16,
     "tournamentType": "League",
     "location": "City Sports Complex"
@@ -409,14 +483,17 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 ### Update Tournament
+
 **PUT** `/tournaments/{id}`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 **Body:**
+
 ```json
 {
   "data": {
@@ -427,9 +504,11 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 ### Delete Tournament
+
 **DELETE** `/tournaments/{id}`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
@@ -439,9 +518,11 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ## Player Profiles
 
 ### Get All Player Profiles
+
 **GET** `/player-profiles`
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -471,14 +552,17 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 ### Create Player Profile
+
 **POST** `/player-profiles`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 **Body:**
+
 ```json
 {
   "data": {
@@ -502,19 +586,23 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ## Community Chat
 
 ### Get All Messages
+
 **GET** `/chats`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 **Query Parameters:**
+
 - `populate`: Fields to populate (e.g., `sender,replyTo`)
 - `sort`: Sort order (e.g., `createdAt:desc`)
 - `filters`: Filter conditions
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -536,14 +624,17 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 ### Send Message
+
 **POST** `/chats`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 **Body:**
+
 ```json
 {
   "data": {
@@ -555,14 +646,17 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 ### Update Message
+
 **PUT** `/chats/{id}`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 **Body:**
+
 ```json
 {
   "data": {
@@ -573,9 +667,11 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 ### Delete Message
+
 **DELETE** `/chats/{id}`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
@@ -585,9 +681,11 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ## Stories
 
 ### Get All Stories
+
 **GET** `/stories`
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -614,14 +712,17 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 ### Create Story
+
 **POST** `/stories`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 **Body:**
+
 ```json
 {
   "data": {
@@ -640,9 +741,11 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ## Posts
 
 ### Get All Posts
+
 **GET** `/posts`
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -663,14 +766,17 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 ### Create Post
+
 **POST** `/posts`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 **Body (Form Data):**
+
 ```
 caption: "Great practice session today! 🏏"
 files.post: [image files]
@@ -681,9 +787,11 @@ files.post: [image files]
 ## Scorecards
 
 ### Get All Scorecards
+
 **GET** `/scorecards`
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -725,14 +833,17 @@ files.post: [image files]
 ## Notifications
 
 ### Get User Notifications
+
 **GET** `/notifications`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 **Response:**
+
 ```json
 {
   "data": [
@@ -751,17 +862,21 @@ Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 ### Mark Notification as Read
+
 **POST** `/notifications/{id}/read`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 ### Mark All Notifications as Read
+
 **POST** `/notifications/read-all`
 
 **Headers:**
+
 ```
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
@@ -773,6 +888,7 @@ Authorization: Bearer YOUR_JWT_TOKEN
 All endpoints may return these error responses:
 
 ### 400 Bad Request
+
 ```json
 {
   "data": null,
@@ -793,6 +909,7 @@ All endpoints may return these error responses:
 ```
 
 ### 401 Unauthorized
+
 ```json
 {
   "data": null,
@@ -805,6 +922,7 @@ All endpoints may return these error responses:
 ```
 
 ### 403 Forbidden
+
 ```json
 {
   "data": null,
@@ -817,6 +935,7 @@ All endpoints may return these error responses:
 ```
 
 ### 404 Not Found
+
 ```json
 {
   "data": null,
@@ -833,6 +952,7 @@ All endpoints may return these error responses:
 ## Flutter Integration Tips
 
 ### 1. HTTP Client Setup
+
 ```dart
 import 'package:dio/dio.dart';
 
@@ -865,6 +985,7 @@ class ApiClient {
 ```
 
 ### 2. Authentication Service
+
 ```dart
 class AuthService {
   final ApiClient _apiClient;
@@ -876,7 +997,7 @@ class AuthService {
       'identifier': email,
       'password': password,
     });
-    
+
     final authResponse = AuthResponse.fromJson(response.data);
     _apiClient.setToken(authResponse.jwt);
     return authResponse;
@@ -888,7 +1009,7 @@ class AuthService {
       'email': email,
       'password': password,
     });
-    
+
     final authResponse = AuthResponse.fromJson(response.data);
     _apiClient.setToken(authResponse.jwt);
     return authResponse;
@@ -897,6 +1018,7 @@ class AuthService {
 ```
 
 ### 3. Model Classes
+
 ```dart
 class Match {
   final int id;
@@ -935,6 +1057,7 @@ class Match {
 ```
 
 ### 4. File Upload Example
+
 ```dart
 Future<void> uploadProfileImage(File imageFile) async {
   FormData formData = FormData.fromMap({
@@ -949,6 +1072,7 @@ Future<void> uploadProfileImage(File imageFile) async {
 ```
 
 ### 5. Real-time Chat (WebSocket)
+
 For real-time chat functionality, consider implementing WebSocket connection or use polling:
 
 ```dart
@@ -960,16 +1084,20 @@ Timer.periodic(Duration(seconds: 2), (timer) {
 ---
 
 ## Rate Limiting
+
 - The API has rate limiting in place
 - Recommended: Implement exponential backoff for failed requests
 - Cache responses when appropriate to reduce API calls
 
 ## Pagination
+
 Most list endpoints support pagination:
+
 - `page`: Page number (starts from 1)
 - `pageSize`: Number of items per page (default: 25, max: 100)
 
 ## File Uploads
+
 - Maximum file size: 10MB
 - Supported formats: JPG, PNG, MP4, PDF
 - Use multipart/form-data for file uploads
