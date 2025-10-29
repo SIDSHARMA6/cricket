@@ -4,53 +4,90 @@
 
 import { factories } from '@strapi/strapi'
 
+// Helper function to transform story data to minimal format
+const transformStoryData = (entity: any) => {
+  const mediaUrls =
+    entity.story?.map((media: any) => ({
+      url: `https://cricket-d5rd.onrender.com${media.url}`,
+      name: media.name,
+      mime: media.mime,
+    })) || [];
+
+  return {
+    id: entity.id,
+    username: entity.user?.username || 'Unknown User',
+    email: entity.user?.email || '',
+    mediaUrls,
+    createdAt: entity.createdAt,
+  };
+};
+
 export default factories.createCoreController('api::story.story', ({ strapi }) => ({
-  // Override the default create method to automatically set the user
+  // Create Story
   async create(ctx) {
-    // Ensure user is authenticated
     if (!ctx.state.user) {
       return ctx.unauthorized('You must be logged in to create a story');
     }
 
-    // Set the user from the authenticated user
-    ctx.request.body.data.user = ctx.state.user.id;
+    const user = ctx.state.user;
 
-    // Call the default create method
-    const response = await super.create(ctx);
-    return response;
+    const { story } = ctx.request.body.data;
+
+    // Create the story entity directly
+    const entity = await strapi.entityService.create('api::story.story', {
+      data: {
+        story,
+        user: user.id,
+      },
+      populate: {
+        story: true,
+        user: {
+          fields: ['username', 'email'],
+        },
+      },
+    });
+
+    return { data: transformStoryData(entity) };
   },
 
-  // Override find method to populate user data
+  // Find All Stories
   async find(ctx) {
-    // Add populate parameter for user
-    ctx.query = {
-      ...ctx.query,
-      populate: {
-        story: true,
-        user: {
-          fields: ['id', 'username', 'email']
-        }
-      }
-    };
+    try {
+      const entities = await strapi.entityService.findMany('api::story.story', {
+        populate: {
+          story: true,
+          user: {
+            fields: ['username', 'email'],
+          },
+        },
+        sort: { createdAt: 'desc' },
+      });
 
-    const response = await super.find(ctx);
-    return response;
+      return { data: entities.map(transformStoryData) };
+    } catch (error) {
+      ctx.throw(500, 'Failed to fetch stories');
+    }
   },
 
-  // Override findOne method to populate user data
+  // Find One Story
   async findOne(ctx) {
-    // Add populate parameter for user
-    ctx.query = {
-      ...ctx.query,
-      populate: {
-        story: true,
-        user: {
-          fields: ['id', 'username', 'email']
-        }
-      }
-    };
+    const { id } = ctx.params;
 
-    const response = await super.findOne(ctx);
-    return response;
-  }
+    try {
+      const entity = await strapi.entityService.findOne('api::story.story', id, {
+        populate: {
+          story: true,
+          user: {
+            fields: ['username', 'email'],
+          },
+        },
+      });
+
+      if (!entity) return ctx.notFound('Story not found');
+
+      return { data: transformStoryData(entity) };
+    } catch (error) {
+      ctx.throw(500, 'Failed to fetch story');
+    }
+  },
 }));
