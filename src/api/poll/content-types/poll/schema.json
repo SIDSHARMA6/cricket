@@ -26,13 +26,7 @@
     "creator": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "plugin::users-permissions.user",
-      "required": true
-    },
-    "match": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::match.match"
+      "target": "plugin::users-permissions.user"
     },
     "isActive": {
       "type": "boolean",
@@ -42,16 +36,9 @@
       "type": "boolean",
       "default": false
     },
-    "expiresAt": {
-      "type": "datetime"
-    },
     "totalVotes": {
       "type": "integer",
       "default": 0
-    },
-    "isAnonymous": {
-      "type": "boolean",
-      "default": false
     }
   }
 }

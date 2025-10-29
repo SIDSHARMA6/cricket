@@ -27,9 +27,7 @@ export interface CricketInnings extends Struct.ComponentSchema {
   };
   attributes: {
     battingStats: Schema.Attribute.JSON;
-    battingTeam: Schema.Attribute.Relation<'oneToOne', 'api::team.team'>;
     bowlingStats: Schema.Attribute.JSON;
-    bowlingTeam: Schema.Attribute.Relation<'oneToOne', 'api::team.team'>;
     extras: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     fallOfWickets: Schema.Attribute.JSON;
     partnerships: Schema.Attribute.JSON;

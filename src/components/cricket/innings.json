@@ -6,16 +6,6 @@
   },
   "options": {},
   "attributes": {
-    "battingTeam": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::team.team"
-    },
-    "bowlingTeam": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::team.team"
-    },
     "totalRuns": {
       "type": "integer",
       "default": 0

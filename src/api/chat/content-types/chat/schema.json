@@ -19,18 +19,30 @@
     "sender": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "plugin::users-permissions.user",
-      "required": true
+      "target": "plugin::users-permissions.user"
     },
     "messageType": {
       "type": "enumeration",
-      "enum": ["text", "image", "video", "audio", "file", "match_invite", "celebration"],
-      "default": "text"
+      "default": "text",
+      "enum": [
+        "text",
+        "image",
+        "video",
+        "audio",
+        "file",
+        "match_invite",
+        "celebration"
+      ]
     },
     "attachments": {
       "type": "media",
       "multiple": true,
-      "allowedTypes": ["images", "videos", "audios", "files"]
+      "allowedTypes": [
+        "images",
+        "videos",
+        "audios",
+        "files"
+      ]
     },
     "replyTo": {
       "type": "relation",
@@ -38,8 +50,7 @@
       "target": "api::chat.chat"
     },
     "reactions": {
-      "type": "json",
-      "default": {}
+      "type": "json"
     },
     "mentions": {
       "type": "relation",
@@ -59,11 +70,6 @@
     },
     "deletedAt": {
       "type": "datetime"
-    },
-    "matchReference": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::match.match"
     },
     "tags": {
       "type": "json"

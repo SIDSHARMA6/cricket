@@ -4,91 +4,27 @@
   "info": {
     "singularName": "match",
     "pluralName": "matches",
-    "displayName": "Match",
-    "description": "Cricket match management"
+    "displayName": "match"
   },
   "options": {
     "draftAndPublish": true
   },
   "pluginOptions": {},
   "attributes": {
-    "title": {
-      "type": "string",
-      "required": true
+    "ground_name": {
+      "type": "string"
     },
-    "groundName": {
-      "type": "string",
-      "required": true
-    },
-    "groundAddress": {
-      "type": "text"
-    },
-    "entryFee": {
-      "type": "decimal",
-      "default": 0
-    },
-    "prizePool": {
-      "type": "decimal",
-      "default": 0
-    },
-    "schedule": {
-      "type": "datetime",
-      "required": true
-    },
-    "endTime": {
+    "date_time": {
       "type": "datetime"
     },
-    "totalPlayersNeeded": {
-      "type": "integer",
-      "required": true,
-      "min": 2,
-      "max": 22
+    "money": {
+      "type": "string"
     },
-    "playersJoined": {
-      "type": "integer",
-      "default": 0
+    "teamA": {
+      "type": "integer"
     },
-    "matchType": {
-      "type": "enumeration",
-      "enum": ["T20", "ODI", "Test", "T10", "Gully Cricket", "Box Cricket"],
-      "default": "T20"
-    },
-    "status": {
-      "type": "enumeration",
-      "enum": ["upcoming", "ongoing", "completed", "cancelled"],
-      "default": "upcoming"
-    },
-    "description": {
-      "type": "richtext"
-    },
-    "rules": {
-      "type": "richtext"
-    },
-    "organizer": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "plugin::users-permissions.user"
-    },
-    "players": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "plugin::users-permissions.user"
-    },
-    "matchImage": {
-      "type": "media",
-      "multiple": false,
-      "allowedTypes": ["images"]
-    },
-    "location": {
-      "type": "json"
-    },
-    "isPrivate": {
-      "type": "boolean",
-      "default": false
-    },
-    "inviteCode": {
-      "type": "string",
-      "unique": true
+    "teamB": {
+      "type": "integer"
     }
   }
 }
