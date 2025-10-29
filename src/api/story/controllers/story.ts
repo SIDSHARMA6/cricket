@@ -28,7 +28,7 @@ export default factories.createCoreController('api::story.story', ({ strapi }) =
       populate: {
         story: true,
         user: {
-          select: ['id', 'username', 'email']
+          fields: ['id', 'username', 'email']
         }
       }
     };
@@ -45,7 +45,7 @@ export default factories.createCoreController('api::story.story', ({ strapi }) =
       populate: {
         story: true,
         user: {
-          select: ['id', 'username', 'email']
+          fields: ['id', 'username', 'email']
         }
       }
     };

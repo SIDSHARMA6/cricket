@@ -12,7 +12,7 @@ export default factories.createCoreService('api::story.story', ({ strapi }) => (
       populate: {
         story: true,
         user: {
-          select: ['id', 'username', 'email']
+          fields: ['id', 'username', 'email']
         },
         ...(params.populate || {})
       }
@@ -29,7 +29,7 @@ export default factories.createCoreService('api::story.story', ({ strapi }) => (
       populate: {
         story: true,
         user: {
-          select: ['id', 'username', 'email']
+          fields: ['id', 'username', 'email']
         },
         ...(params.populate || {})
       }
