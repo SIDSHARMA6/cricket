@@ -54,8 +54,9 @@ export default factories.createCoreController('api::poll.poll', ({ strapi }) => 
         return ctx.badRequest('Poll cannot have more than 12 options');
       }
 
-      // Format options (WhatsApp style - simple text options)
-      const formattedOptions = options.map((option: any) => ({
+      // Format options as simple JSON array
+      const formattedOptions = options.map((option: any, index: number) => ({
+        id: index,
         text: typeof option === 'string' ? option.trim() : option.text?.trim(),
         voteCount: 0
       }));
@@ -67,7 +68,6 @@ export default factories.createCoreController('api::poll.poll', ({ strapi }) => 
           options: formattedOptions,
           allowMultipleVotes: false, // WhatsApp polls don't allow multiple votes
           isActive: true,
-          createdBy: ctx.state.user.id,
           votes: []
         },
         populate: ['createdBy']

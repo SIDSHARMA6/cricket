@@ -34,6 +34,21 @@
       "type": "relation",
       "relation": "manyToMany",
       "target": "plugin::users-permissions.user"
+    },
+
+    "comments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::comment.comment",
+      "mappedBy": "post"
+    },
+    "likeCount": {
+      "type": "integer",
+      "default": 0
+    },
+    "commentCount": {
+      "type": "integer",
+      "default": 0
     }
   }
 }

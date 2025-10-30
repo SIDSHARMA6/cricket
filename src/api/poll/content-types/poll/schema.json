@@ -17,12 +17,8 @@
       "required": true
     },
     "options": {
-      "type": "component",
-      "repeatable": true,
-      "component": "poll.poll-option",
-      "required": true,
-      "min": 2,
-      "max": 10
+      "type": "json",
+      "required": true
     },
     "createdBy": {
       "type": "relation",

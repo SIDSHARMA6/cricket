@@ -2,7 +2,7 @@
 
 ## Base URL
 ```
-https://cricket-d5rd.onrender.com/api
+http://localhost:1337/api
 ```
 
 ## Authentication
@@ -13,277 +13,7 @@ Authorization: Bearer <your-jwt-token>
 
 ---
 
-## 📖 Story API
-
-### 1. Create Story
-**POST** `/stories`
-
-**Headers:**
-```json
-{
-  "Authorization": "Bearer <jwt-token>",
-  "Content-Type": "application/json"
-}
-```
-
-**Request Body:**
-```json
-{
-  "data": {
-    "story": [1, 2, 3]
-  }
-}
-```
-
-**Response (201):**
-```json
-{
-  "data": {
-    "id": 1,
-    "username": "john_doe",
-    "email": "john@example.com",
-    "mediaUrls": [
-      {
-        "url": "https://cricket-d5rd.onrender.com/uploads/image1.jpg",
-        "name": "image1.jpg",
-        "mime": "image/jpeg",
-        "size": 1024000
-      }
-    ],
-    "likesCount": 0,
-    "isLiked": false,
-    "createdAt": "2024-01-15T10:30:00.000Z",
-    "updatedAt": "2024-01-15T10:30:00.000Z"
-  },
-  "meta": {
-    "message": "Story created successfully"
-  }
-}
-```
-
-### 2. Get All Stories (Paginated)
-**GET** `/stories?page=1&pageSize=10`
-
-**Headers:**
-```json
-{
-  "Authorization": "Bearer <jwt-token>"
-}
-```
-
-**Response (200):**
-```json
-{
-  "data": [
-    {
-      "id": 1,
-      "username": "john_doe",
-      "email": "john@example.com",
-      "mediaUrls": [
-        {
-          "url": "https://cricket-d5rd.onrender.com/uploads/image1.jpg",
-          "name": "image1.jpg",
-          "mime": "image/jpeg",
-          "size": 1024000
-        }
-      ],
-      "likesCount": 5,
-      "isLiked": true,
-      "createdAt": "2024-01-15T10:30:00.000Z",
-      "updatedAt": "2024-01-15T10:30:00.000Z"
-    }
-  ],
-  "meta": {
-    "pagination": {
-      "page": 1,
-      "pageSize": 10,
-      "pageCount": 5,
-      "total": 50
-    }
-  }
-}
-```
-
-### 3. Get Stories with Filters
-**GET** `/stories/where?userId=123&liked=true&limit=5&offset=0`
-
-**Headers:**
-```json
-{
-  "Authorization": "Bearer <jwt-token>"
-}
-```
-
-**Query Parameters:**
-- `userId` - Filter by user ID
-- `liked=true` - Get stories liked by current user
-- `limit` - Number of results (default: 10)
-- `offset` - Skip results for pagination (default: 0)
-
-**Response (200):**
-```json
-{
-  "data": [
-    {
-      "id": 1,
-      "username": "john_doe",
-      "email": "john@example.com",
-      "mediaUrls": [...],
-      "likesCount": 5,
-      "isLiked": true,
-      "createdAt": "2024-01-15T10:30:00.000Z",
-      "updatedAt": "2024-01-15T10:30:00.000Z"
-    }
-  ],
-  "meta": {
-    "filters": {
-      "user": { "id": "123" }
-    },
-    "pagination": {
-      "limit": 5,
-      "offset": 0
-    }
-  }
-}
-```
-
-### 4. Get Single Story
-**GET** `/stories/:id`
-
-**Headers:**
-```json
-{
-  "Authorization": "Bearer <jwt-token>"
-}
-```
-
-**Response (200):**
-```json
-{
-  "data": {
-    "id": 1,
-    "username": "john_doe",
-    "email": "john@example.com",
-    "mediaUrls": [...],
-    "likesCount": 5,
-    "isLiked": true,
-    "createdAt": "2024-01-15T10:30:00.000Z",
-    "updatedAt": "2024-01-15T10:30:00.000Z"
-  }
-}
-```
-
-### 5. Update Story
-**PUT** `/stories/:id`
-
-**Headers:**
-```json
-{
-  "Authorization": "Bearer <jwt-token>",
-  "Content-Type": "application/json"
-}
-```
-
-**Request Body:**
-```json
-{
-  "data": {
-    "story": [4, 5, 6]
-  }
-}
-```
-
-**Response (200):**
-```json
-{
-  "data": {
-    "id": 1,
-    "username": "john_doe",
-    "email": "john@example.com",
-    "mediaUrls": [...],
-    "likesCount": 5,
-    "isLiked": false,
-    "createdAt": "2024-01-15T10:30:00.000Z",
-    "updatedAt": "2024-01-15T11:30:00.000Z"
-  },
-  "meta": {
-    "message": "Story updated successfully"
-  }
-}
-```
-
-### 6. Delete Story
-**DELETE** `/stories/:id`
-
-**Headers:**
-```json
-{
-  "Authorization": "Bearer <jwt-token>"
-}
-```
-
-**Response (200):**
-```json
-{
-  "data": {
-    "message": "Story deleted successfully",
-    "id": "1"
-  }
-}
-```
-
-### 7. Bulk Delete Stories
-**DELETE** `/stories/bulk-delete`
-
-**Headers:**
-```json
-{
-  "Authorization": "Bearer <jwt-token>",
-  "Content-Type": "application/json"
-}
-```
-
-**Request Body:**
-```json
-{
-  "ids": [1, 2, 3, 4, 5]
-}
-```
-
-**Response (200):**
-```json
-{
-  "data": {
-    "message": "5 stories deleted successfully",
-    "deletedIds": [1, 2, 3, 4, 5],
-    "failedIds": []
-  }
-}
-```
-
-### 8. Like/Unlike Story
-**POST** `/stories/:id/like`
-
-**Headers:**
-```json
-{
-  "Authorization": "Bearer <jwt-token>"
-}
-```
-
-**Response (200):**
-```json
-{
-  "data": {
-    "isLiked": true,
-    "likesCount": 6
-  }
-}
-```
-
----
-
-## 📝 Post API
+## �  Instagram-like Post API
 
 ### 1. Create Post
 **POST** `/posts`
@@ -300,8 +30,8 @@ Authorization: Bearer <your-jwt-token>
 ```json
 {
   "data": {
-    "post": [1, 2, 3],
-    "caption": "Amazing cricket match today! 🏏"
+    "caption": "My first Instagram-like post! 🏏",
+    "post": []
   }
 }
 ```
@@ -311,21 +41,18 @@ Authorization: Bearer <your-jwt-token>
 {
   "data": {
     "id": 1,
-    "caption": "Amazing cricket match today! 🏏",
-    "username": "john_doe",
-    "email": "john@example.com",
-    "mediaUrls": [
-      {
-        "url": "https://cricket-d5rd.onrender.com/uploads/image1.jpg",
-        "name": "image1.jpg",
-        "mime": "image/jpeg",
-        "size": 1024000
-      }
-    ],
-    "likesCount": 0,
+    "caption": "My first Instagram-like post! 🏏",
+    "user": {
+      "id": 5,
+      "username": "player1235444",
+      "email": "player123445@example.com"
+    },
+    "mediaUrls": [],
+    "likeCount": 0,
+    "commentCount": 0,
     "isLiked": false,
-    "createdAt": "2024-01-15T10:30:00.000Z",
-    "updatedAt": "2024-01-15T10:30:00.000Z"
+    "createdAt": "2025-10-30T16:20:40.997Z",
+    "updatedAt": "2025-10-30T16:20:40.997Z"
   },
   "meta": {
     "message": "Post created successfully"
@@ -333,8 +60,8 @@ Authorization: Bearer <your-jwt-token>
 }
 ```
 
-### 2. Get All Posts (Paginated)
-**GET** `/posts?page=1&pageSize=10`
+### 2. Get All Posts (Instagram Feed)
+**GET** `/posts`
 
 **Headers:**
 ```json
@@ -348,63 +75,40 @@ Authorization: Bearer <your-jwt-token>
 {
   "data": [
     {
-      "id": 1,
-      "caption": "Amazing cricket match today! 🏏",
-      "username": "john_doe",
-      "email": "john@example.com",
-      "mediaUrls": [...],
-      "likesCount": 5,
-      "isLiked": true,
-      "createdAt": "2024-01-15T10:30:00.000Z",
-      "updatedAt": "2024-01-15T10:30:00.000Z"
-    }
-  ],
-  "meta": {
-    "pagination": {
-      "page": 1,
-      "pageSize": 10,
-      "pageCount": 5,
-      "total": 50
-    }
-  }
-}
-```
-
-### 3. Get Posts with Filters
-**GET** `/posts/where?userId=123&liked=true&caption=cricket&limit=5&offset=0`
-
-**Headers:**
-```json
-{
-  "Authorization": "Bearer <jwt-token>"
-}
-```
-
-**Query Parameters:**
-- `userId` - Filter by user ID
-- `liked=true` - Get posts liked by current user
-- `caption` - Search in caption text
-- `limit` - Number of results (default: 10)
-- `offset` - Skip results for pagination (default: 0)
-
-**Response (200):**
-```json
-{
-  "data": [...],
-  "meta": {
-    "filters": {
-      "user": { "id": "123" },
-      "caption": { "$containsi": "cricket" }
+      "id": 2,
+      "caption": "Another awesome cricket moment! Who's your favorite player? 🏆",
+      "user": {
+        "id": 5,
+        "username": "player1235444",
+        "email": "player123445@example.com"
+      },
+      "mediaUrls": [],
+      "likeCount": 0,
+      "commentCount": 0,
+      "isLiked": false,
+      "createdAt": "2025-10-30T16:33:14.561Z",
+      "updatedAt": "2025-10-30T16:33:14.561Z"
     },
-    "pagination": {
-      "limit": 5,
-      "offset": 0
+    {
+      "id": 1,
+      "caption": "My first Instagram-like post! 🏏",
+      "user": {
+        "id": 5,
+        "username": "player1235444",
+        "email": "player123445@example.com"
+      },
+      "mediaUrls": [],
+      "likeCount": 0,
+      "commentCount": 0,
+      "isLiked": false,
+      "createdAt": "2025-10-30T16:20:40.997Z",
+      "updatedAt": "2025-10-30T16:28:55.261Z"
     }
-  }
+  ]
 }
 ```
 
-### 4. Get Single Post
+### 3. Get Single Post
 **GET** `/posts/:id`
 
 **Headers:**
@@ -419,14 +123,73 @@ Authorization: Bearer <your-jwt-token>
 {
   "data": {
     "id": 1,
-    "caption": "Amazing cricket match today! 🏏",
-    "username": "john_doe",
-    "email": "john@example.com",
-    "mediaUrls": [...],
-    "likesCount": 5,
+    "caption": "My first Instagram-like post! 🏏",
+    "user": {
+      "id": 5,
+      "username": "player1235444",
+      "email": "player123445@example.com"
+    },
+    "mediaUrls": [],
+    "likeCount": 0,
+    "commentCount": 0,
+    "isLiked": false,
+    "createdAt": "2025-10-30T16:20:40.997Z",
+    "updatedAt": "2025-10-30T16:28:55.261Z"
+  }
+}
+```
+
+### 4. Like/Unlike Post (Instagram Style)
+**POST** `/posts/:id/like`
+
+**Headers:**
+```json
+{
+  "Authorization": "Bearer <jwt-token>",
+  "Content-Type": "application/json"
+}
+```
+
+**Response (200) - Like:**
+```json
+{
+  "data": {
+    "id": 1,
+    "caption": "My first Instagram-like post! 🏏",
+    "user": {
+      "id": 5,
+      "username": "player1235444",
+      "email": "player123445@example.com"
+    },
+    "mediaUrls": [],
+    "likeCount": 1,
+    "commentCount": 0,
     "isLiked": true,
-    "createdAt": "2024-01-15T10:30:00.000Z",
-    "updatedAt": "2024-01-15T10:30:00.000Z"
+    "createdAt": "2025-10-30T16:20:40.997Z",
+    "updatedAt": "2025-10-30T16:28:38.992Z",
+    "message": "Post liked successfully"
+  }
+}
+```
+
+**Response (200) - Unlike:**
+```json
+{
+  "data": {
+    "id": 1,
+    "caption": "My first Instagram-like post! 🏏",
+    "user": {
+      "id": 5,
+      "username": "player1235444",
+      "email": "player123445@example.com"
+    },
+    "mediaUrls": [],
+    "likeCount": 0,
+    "commentCount": 0,
+    "isLiked": false,
+    "createdAt": "2025-10-30T16:20:40.997Z",
+    "updatedAt": "2025-10-30T16:28:55.261Z",
+    "message": "Post unliked successfully"
   }
 }
 ```
@@ -446,8 +209,7 @@ Authorization: Bearer <your-jwt-token>
 ```json
 {
   "data": {
-    "post": [4, 5, 6],
-    "caption": "Updated caption for the post"
+    "caption": "Updated caption for my post! 🏏✨"
   }
 }
 ```
@@ -457,17 +219,18 @@ Authorization: Bearer <your-jwt-token>
 {
   "data": {
     "id": 1,
-    "caption": "Updated caption for the post",
-    "username": "john_doe",
-    "email": "john@example.com",
-    "mediaUrls": [...],
-    "likesCount": 5,
+    "caption": "Updated caption for my post! 🏏✨",
+    "user": {
+      "id": 5,
+      "username": "player1235444",
+      "email": "player123445@example.com"
+    },
+    "mediaUrls": [],
+    "likeCount": 0,
+    "commentCount": 0,
     "isLiked": false,
-    "createdAt": "2024-01-15T10:30:00.000Z",
-    "updatedAt": "2024-01-15T11:30:00.000Z"
-  },
-  "meta": {
-    "message": "Post updated successfully"
+    "createdAt": "2025-10-30T16:20:40.997Z",
+    "updatedAt": "2025-10-30T16:35:00.000Z"
   }
 }
 ```
@@ -486,38 +249,17 @@ Authorization: Bearer <your-jwt-token>
 ```json
 {
   "data": {
-    "message": "Post deleted successfully",
-    "id": "1"
-  }
-}
-```
-
-### 7. Like/Unlike Post
-**POST** `/posts/:id/like`
-
-**Headers:**
-```json
-{
-  "Authorization": "Bearer <jwt-token>"
-}
-```
-
-**Response (200):**
-```json
-{
-  "data": {
-    "isLiked": true,
-    "likesCount": 6
+    "message": "Post deleted successfully"
   }
 }
 ```
 
 ---
 
-## 💬 Chat API
+## 💬 Instagram-like Comment API
 
-### 1. Send Message
-**POST** `/chats`
+### 1. Create Comment
+**POST** `/comments`
 
 **Headers:**
 ```json
@@ -531,12 +273,8 @@ Authorization: Bearer <your-jwt-token>
 ```json
 {
   "data": {
-    "message": "Hello everyone! Ready for today's match?",
-    "messageType": "text",
-    "attachments": [1, 2],
-    "replyTo": 5,
-    "mentions": [10, 15],
-    "tags": ["cricket", "match"]
+    "text": "Great post! Love the cricket content! 🏏",
+    "post": 1
   }
 }
 ```
@@ -546,49 +284,255 @@ Authorization: Bearer <your-jwt-token>
 {
   "data": {
     "id": 1,
-    "message": "Hello everyone! Ready for today's match?",
-    "messageType": "text",
-    "sender": {
-      "id": 1,
-      "username": "john_doe",
-      "email": "john@exampl
-    },
-    "attachmentUrls": [
-      {
-        "url": "https://cricket-d5rd.onrender.com/uploads/image1.jpg",
-        "name": "image1.jpg",
-        "mime": "image/jpeg",
-        "size": 1024000
-      }
-    ],
-    "replyTo": {
+    "text": "Great post! Love the cricket content! 🏏",
+    "user": {
       "id": 5,
-      "message": "Who's playing today?",
-      "sender": "jane_doe"
+      "username": "player1235444",
+      "email": "player123445@example.com"
     },
-    "reactions": {},
-    "mentions": [
-      {
-        "id": 10,
-        "username": "player1"
-      }
-    ],
-    "isEdited": false,
-    "editedAt": null,
-    "isDeleted": false,
-    "deletedAt": null,
-    "tags": ["cricket", "match"],
-    "createdAt": "2024-01-15T10:30:00.000Z",
-    "updatedAt": "2024-01-15T10:30:00.000Z"
+    "post": {
+      "id": 1,
+      "caption": "My first Instagram-like post! 🏏"
+    },
+    "story": null,
+    "createdAt": "2025-10-30T16:26:13.152Z",
+    "updatedAt": "2025-10-30T16:26:13.152Z"
   },
   "meta": {
-    "message": "Message created successfully"
+    "message": "Comment created successfully"
   }
 }
 ```
 
-### 2. Get All Messages (Paginated)
-**GET** `/chats?page=1&pageSize=50`
+### 2. Get Comments for Post
+**GET** `/comments?post=:postId`
+
+**Headers:**
+```json
+{
+  "Authorization": "Bearer <jwt-token>"
+}
+```
+
+**Response (200):**
+```json
+{
+  "data": [
+    {
+      "id": 2,
+      "text": "Amazing cricket post! Can't wait for the next match! 🔥",
+      "user": {
+        "id": 5,
+        "username": "player1235444",
+        "email": "player123445@example.com"
+      },
+      "post": {
+        "id": 1,
+        "caption": "My first Instagram-like post! 🏏"
+      },
+      "story": null,
+      "createdAt": "2025-10-30T16:30:41.508Z",
+      "updatedAt": "2025-10-30T16:30:41.508Z"
+    },
+    {
+      "id": 1,
+      "text": "Great post! Love the cricket content! 🏏",
+      "user": {
+        "id": 5,
+        "username": "player1235444",
+        "email": "player123445@example.com"
+      },
+      "post": {
+        "id": 1,
+        "caption": "My first Instagram-like post! 🏏"
+      },
+      "story": null,
+      "createdAt": "2025-10-30T16:26:13.152Z",
+      "updatedAt": "2025-10-30T16:26:13.152Z"
+    }
+  ],
+  "meta": {
+    "pagination": {
+      "page": 1,
+      "pageSize": 10,
+      "pageCount": 1,
+      "total": 2
+    }
+  }
+}
+```
+
+### 3. Get Single Comment
+**GET** `/comments/:id`
+
+**Headers:**
+```json
+{
+  "Authorization": "Bearer <jwt-token>"
+}
+```
+
+**Response (200):**
+```json
+{
+  "data": {
+    "id": 1,
+    "text": "Great post! Love the cricket content! 🏏",
+    "user": {
+      "id": 5,
+      "username": "player1235444",
+      "email": "player123445@example.com"
+    },
+    "post": {
+      "id": 1,
+      "caption": "My first Instagram-like post! 🏏"
+    },
+    "story": null,
+    "createdAt": "2025-10-30T16:26:13.152Z",
+    "updatedAt": "2025-10-30T16:26:13.152Z"
+  }
+}
+```
+
+### 4. Update Comment
+**PUT** `/comments/:id`
+
+**Headers:**
+```json
+{
+  "Authorization": "Bearer <jwt-token>",
+  "Content-Type": "application/json"
+}
+```
+
+**Request Body:**
+```json
+{
+  "data": {
+    "text": "Great post! Love the cricket content! Amazing match! 🏏🔥"
+  }
+}
+```
+
+**Response (200):**
+```json
+{
+  "data": {
+    "id": 1,
+    "text": "Great post! Love the cricket content! Amazing match! 🏏🔥",
+    "user": {
+      "id": 5,
+      "username": "player1235444",
+      "email": "player123445@example.com"
+    },
+    "post": {
+      "id": 1,
+      "caption": "My first Instagram-like post! 🏏"
+    },
+    "story": null,
+    "createdAt": "2025-10-30T16:26:13.152Z",
+    "updatedAt": "2025-10-30T16:35:00.000Z"
+  },
+  "meta": {
+    "message": "Comment updated successfully"
+  }
+}
+```
+
+### 5. Delete Comment
+**DELETE** `/comments/:id`
+
+**Headers:**
+```json
+{
+  "Authorization": "Bearer <jwt-token>"
+}
+```
+
+**Response (200):**
+```json
+{
+  "data": {
+    "message": "Comment deleted successfully",
+    "id": "1"
+  }
+}
+```
+
+---
+
+## 📊 WhatsApp-like Poll API
+
+### 1. Create Poll
+**POST** `/polls`
+
+**Headers:**
+```json
+{
+  "Authorization": "Bearer <jwt-token>",
+  "Content-Type": "application/json"
+}
+```
+
+**Request Body:**
+```json
+{
+  "data": {
+    "question": "Which is your favorite cricket format?",
+    "options": [
+      "Test Cricket",
+      "ODI",
+      "T20"
+    ]
+  }
+}
+```
+
+**Response (201):**
+```json
+{
+  "data": {
+    "id": 1,
+    "question": "Which is your favorite cricket format?",
+    "createdAt": "2025-10-30T15:42:23.139Z",
+    "updatedAt": "2025-10-30T15:42:23.139Z",
+    "publishedAt": "2025-10-30T15:42:23.129Z",
+    "locale": null,
+    "isActive": true,
+    "allowMultipleVotes": false,
+    "votes": [],
+    "options": [
+      {
+        "id": 0,
+        "text": "Test Cricket",
+        "voteCount": 0,
+        "votes": 0,
+        "percentage": 0
+      },
+      {
+        "id": 1,
+        "text": "ODI",
+        "voteCount": 0,
+        "votes": 0,
+        "percentage": 0
+      },
+      {
+        "id": 2,
+        "text": "T20",
+        "voteCount": 0,
+        "votes": 0,
+        "percentage": 0
+      }
+    ],
+    "createdBy": null,
+    "totalVotes": 0,
+    "hasVoted": false
+  }
+}
+```
+
+### 2. Get All Polls
+**GET** `/polls`
 
 **Headers:**
 ```json
@@ -603,42 +547,55 @@ Authorization: Bearer <your-jwt-token>
   "data": [
     {
       "id": 1,
-      "message": "Hello everyone! Ready for today's match?",
-      "messageType": "text",
-      "sender": {
-        "id": 1,
-        "username": "john_doe",
-        "email": "john@example.com"
-      },
-      "attachmentUrls": [...],
-      "replyTo": null,
-      "reactions": {
-        "👍": [1, 2, 3],
-        "🏏": [4, 5]
-      },
-      "mentions": [...],
-      "isEdited": false,
-      "editedAt": null,
-      "isDeleted": false,
-      "deletedAt": null,
-      "tags": ["cricket", "match"],
-      "createdAt": "2024-01-15T10:30:00.000Z",
-      "updatedAt": "2024-01-15T10:30:00.000Z"
+      "question": "Which is your favorite cricket format?",
+      "createdAt": "2025-10-30T15:42:23.139Z",
+      "updatedAt": "2025-10-30T15:44:53.066Z",
+      "publishedAt": "2025-10-30T15:44:53.054Z",
+      "locale": null,
+      "isActive": true,
+      "allowMultipleVotes": false,
+      "votes": [
+        {
+          "userId": 5,
+          "username": "player1235444",
+          "optionIndex": 2,
+          "votedAt": "2025-10-30T15:44:53.051Z"
+        }
+      ],
+      "options": [
+        {
+          "id": 0,
+          "text": "Test Cricket",
+          "voteCount": 0,
+          "votes": 0,
+          "percentage": 0
+        },
+        {
+          "id": 1,
+          "text": "ODI",
+          "voteCount": 0,
+          "votes": 0,
+          "percentage": 0
+        },
+        {
+          "id": 2,
+          "text": "T20",
+          "voteCount": 0,
+          "votes": 1,
+          "percentage": 100
+        }
+      ],
+      "createdBy": null,
+      "totalVotes": 1,
+      "hasVoted": true,
+      "userVote": 2
     }
-  ],
-  "meta": {
-    "pagination": {
-      "page": 1,
-      "pageSize": 50,
-      "pageCount": 3,
-      "total": 150
-    }
-  }
+  ]
 }
 ```
 
-### 3. Get Single Message
-**GET** `/chats/:id`
+### 3. Get Single Poll
+**GET** `/polls/:id`
 
 **Headers:**
 ```json
@@ -652,32 +609,75 @@ Authorization: Bearer <your-jwt-token>
 {
   "data": {
     "id": 1,
-    "message": "Hello everyone! Ready for today's match?",
-    "messageType": "text",
-    "sender": {
-      "id": 1,
-      "username": "john_doe",
-      "email": "john@example.com"
-    },
-    "attachmentUrls": [...],
-    "replyTo": null,
-    "reactions": {},
-    "mentions": [...],
-    "isEdited": false,
-    "editedAt": null,
-    "isDeleted": false,
-    "deletedAt": null,
-    "tags": ["cricket", "match"],
-    "createdAt": "2024-01-15T10:30:00.000Z",
-    "updatedAt": "2024-01-15T10:30:00.000Z"
+    "question": "Which is your favorite cricket format?",
+    "createdAt": "2025-10-30T15:42:23.139Z",
+    "updatedAt": "2025-10-30T15:44:53.066Z",
+    "publishedAt": "2025-10-30T15:44:53.054Z",
+    "locale": null,
+    "isActive": true,
+    "allowMultipleVotes": false,
+    "votes": [
+      {
+        "userId": 5,
+        "username": "player1235444",
+        "optionIndex": 2,
+        "votedAt": "2025-10-30T15:44:53.051Z"
+      }
+    ],
+    "options": [
+      {
+        "id": 0,
+        "text": "Test Cricket",
+        "voteCount": 0,
+        "votes": 0,
+        "percentage": 0
+      },
+      {
+        "id": 1,
+        "text": "ODI",
+        "voteCount": 0,
+        "votes": 0,
+        "percentage": 0
+      },
+      {
+        "id": 2,
+        "text": "T20",
+        "voteCount": 0,
+        "votes": 1,
+        "percentage": 100
+      }
+    ],
+    "createdBy": null,
+    "totalVotes": 1,
+    "hasVoted": true,
+    "userVote": 2,
+    "voters": [
+      {
+        "userId": 5,
+        "username": "player1235444",
+        "selectedOption": 2
+      }
+    ]
   }
 }
 ```
 
-### 4. Edit Message
-**PUT** `/chats/:id`
+### 4. Vote on Poll (WhatsApp Style)
+**POST** `/polls/:id/vote`
 
 **Headers:**
+```json
+{
+  "Authorization": "Bearer <jwt-token>",
+  "Content-Type": "application/json"
+}
+```
+
+**Request Body:**
+```json
+{
+  "optionIndex": 0
+}
 ```json
 {
   "Authorization": "Bearer <jwt-token>",

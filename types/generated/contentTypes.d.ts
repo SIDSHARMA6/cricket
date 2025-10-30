@@ -744,15 +744,7 @@ export interface ApiPollPoll extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::poll.poll'> &
       Schema.Attribute.Private;
-    options: Schema.Attribute.Component<'poll.poll-option', true> &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 10;
-          min: 2;
-        },
-        number
-      >;
+    options: Schema.Attribute.JSON & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     question: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
@@ -774,9 +766,12 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
   };
   attributes: {
     caption: Schema.Attribute.String;
+    commentCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    comments: Schema.Attribute.Relation<'oneToMany', 'api::comment.comment'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    likeCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     liked_by: Schema.Attribute.Relation<
       'manyToMany',
       'plugin::users-permissions.user'

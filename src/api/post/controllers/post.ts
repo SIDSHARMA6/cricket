@@ -1,37 +1,35 @@
 /**
- * post controller
+ * post controller - Instagram-like functionality
  */
 
 import { factories } from '@strapi/strapi'
-import {
-  transformMediaUrls,
-  isLikedByUser,
-  validatePagination,
-  createPaginationMeta,
-  validateMediaInput,
-  checkRateLimit,
-  ErrorResponses,
-  SuccessResponses,
-  getEntityServiceOptions,
-  handleLikeToggle,
-  checkOwnership,
-  USER_POPULATE,
-  LIKED_BY_POPULATE,
-} from '../../../utils/api-helpers';
 
-// Helper function to transform post data
-const transformPostData = (entity: any, currentUserId?: number) => {
-  const mediaUrls = transformMediaUrls(entity.post);
+// Helper function to calculate counts and transform post data
+const transformPostData = async (strapi: any, entity: any, currentUserId?: number) => {
+  // Get comment count
+  const commentCount = await strapi.entityService.count('api::comment.comment', {
+    filters: { post: { id: entity.id } }
+  } as any);
+
+  // Get like info from the entity
   const likedBy = entity.liked_by || [];
+  const likeCount = likedBy.length;
+  
+  // Check if current user liked this post
+  const isLiked = currentUserId ? likedBy.some((user: any) => user.id === currentUserId) : false;
 
   return {
     id: entity.id,
     caption: entity.caption || '',
-    username: entity.user?.username || 'Unknown User',
-    email: entity.user?.email || '',
-    mediaUrls,
-    likesCount: likedBy.length,
-    isLiked: isLikedByUser(likedBy, currentUserId),
+    user: {
+      id: entity.user?.id,
+      username: entity.user?.username || 'Unknown User',
+      email: entity.user?.email || ''
+    },
+    mediaUrls: entity.post || [],
+    likeCount: entity.likeCount || 0,
+    commentCount: entity.commentCount || 0,
+    isLiked,
     createdAt: entity.createdAt,
     updatedAt: entity.updatedAt,
   };
@@ -41,244 +39,215 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
   // Create Post
   async create(ctx) {
     if (!ctx.state.user) {
-      return ctx.unauthorized(ErrorResponses.UNAUTHORIZED);
+      return ctx.unauthorized('Authentication required');
     }
 
-    const user = ctx.state.user;
-    const { post, caption } = ctx.request.body.data;
+    const { caption, post } = ctx.request.body.data;
 
     try {
-      // Validate input
-      validateMediaInput(post, 10, 'Post');
-
-      // Check rate limiting - max 10 posts per hour per user
-      const isRateLimited = await checkRateLimit(strapi, 'api::post.post', user.id, 10, 1);
-      if (isRateLimited) {
-        return ctx.tooManyRequests(ErrorResponses.RATE_LIMIT(10, 'hour'));
-      }
-
-      // Create the post entity
+      // Create the post
       const entity = await strapi.entityService.create('api::post.post', {
         data: {
-          post,
           caption,
-          user: user.id,
+          post,
+          user: ctx.state.user.id,
+          likeCount: 0,
+          commentCount: 0
         },
-        populate: {
-          post: true,
-          user: USER_POPULATE,
-        } as any,
-      });
+        populate: ['user', 'liked_by']
+      } as any);
+
+      const transformedData = await transformPostData(strapi, entity, ctx.state.user.id);
 
       return {
-        data: transformPostData(entity),
+        data: transformedData,
         meta: {
-          message: SuccessResponses.CREATED('Post')
+          message: 'Post created successfully'
         }
       };
-    } catch (error: any) {
-      if (error.message.includes('must contain') || error.message.includes('cannot contain')) {
-        return ctx.badRequest(ErrorResponses.VALIDATION_ERROR(error.message));
-      }
-      ctx.throw(500, ErrorResponses.SERVER_ERROR('create post'));
+    } catch (error) {
+      console.error('Post creation error:', error);
+      return ctx.internalServerError('Failed to create post');
     }
   },
 
-  // Find All Posts with Pagination
+  // Get All Posts
   async find(ctx) {
     try {
-      const { page, pageSize, start } = validatePagination(ctx.query.page, ctx.query.pageSize);
-
-      const [entities, total] = await Promise.all([
-        strapi.entityService.findMany('api::post.post', {
-          ...getEntityServiceOptions({
-            post: true,
-            user: USER_POPULATE,
-            liked_by: LIKED_BY_POPULATE,
-          }),
-          start,
-          limit: pageSize,
-        }),
-        strapi.entityService.count('api::post.post'),
-      ]);
-
       const currentUserId = ctx.state.user?.id;
-      return {
-        data: entities.map((entity: any) => transformPostData(entity, currentUserId)),
-        meta: createPaginationMeta(page, pageSize, total)
-      };
+
+      const posts = await strapi.entityService.findMany('api::post.post', {
+        populate: ['user', 'liked_by'],
+        sort: { createdAt: 'desc' }
+      } as any);
+
+      const transformedPosts = await Promise.all(
+        posts.map((post: any) => transformPostData(strapi, post, currentUserId))
+      );
+
+      return { data: transformedPosts };
     } catch (error) {
-      ctx.throw(500, ErrorResponses.SERVER_ERROR('fetch posts'));
+      console.error('Posts fetch error:', error);
+      return ctx.internalServerError('Failed to fetch posts');
     }
   },
 
-  // Find Posts with Filters
-  async findWhere(ctx) {
+  // Get Single Post
+  async findOne(ctx) {
+    const { id } = ctx.params;
+    const currentUserId = ctx.state.user?.id;
+
     try {
-      const { userId, liked, caption, limit = 10, offset = 0 } = ctx.query;
-      
-      let filters: any = {};
-      
-      if (userId) {
-        filters.user = { id: userId };
-      }
-      
-      if (liked === 'true' && ctx.state.user) {
-        filters.liked_by = { id: ctx.state.user.id };
+      const post = await strapi.entityService.findOne('api::post.post', id, {
+        populate: ['user', 'liked_by']
+      } as any);
+
+      if (!post) {
+        return ctx.notFound('Post not found');
       }
 
-      if (caption) {
-        filters.caption = { $containsi: caption };
-      }
+      const transformedData = await transformPostData(strapi, post, currentUserId);
 
-      const entities = await strapi.entityService.findMany('api::post.post', {
-        filters,
-        ...getEntityServiceOptions({
-          post: true,
-          user: USER_POPULATE,
-          liked_by: LIKED_BY_POPULATE,
-        }),
-        start: parseInt(offset as string),
-        limit: parseInt(limit as string),
+      return { data: transformedData };
+    } catch (error) {
+      console.error('Post findOne error:', error);
+      return ctx.internalServerError('Failed to fetch post');
+    }
+  },
+
+  // Like/Unlike Post (Instagram style)
+  async likePost(ctx) {
+    if (!ctx.state.user) {
+      return ctx.unauthorized('Authentication required');
+    }
+
+    const { id } = ctx.params;
+    const userId = ctx.state.user.id;
+
+    try {
+      // Get the post
+      const post: any = await strapi.entityService.findOne('api::post.post', id, {
+        populate: ['liked_by']
       });
 
-      const currentUserId = ctx.state.user?.id;
+      if (!post) {
+        return ctx.notFound('Post not found');
+      }
+
+      const likedBy = post.liked_by || [];
+      const isCurrentlyLiked = likedBy.some((user: any) => user.id === userId);
+
+      let updatedLikedBy;
+      let message;
+
+      if (isCurrentlyLiked) {
+        // Unlike - remove user from liked_by
+        updatedLikedBy = likedBy.filter((user: any) => user.id !== userId);
+        message = 'Post unliked successfully';
+      } else {
+        // Like - add user to liked_by
+        updatedLikedBy = [...likedBy, { id: userId }];
+        message = 'Post liked successfully';
+      }
+
+      // Update the post
+      const updatedPost = await strapi.entityService.update('api::post.post', id, {
+        data: {
+          liked_by: updatedLikedBy.map((user: any) => user.id),
+          likeCount: updatedLikedBy.length
+        },
+        populate: ['user', 'liked_by']
+      } as any);
+
+      const transformedData = await transformPostData(strapi, updatedPost, userId);
+
       return {
-        data: entities.map((entity: any) => transformPostData(entity, currentUserId)),
-        meta: {
-          filters,
-          pagination: {
-            limit: parseInt(limit as string),
-            offset: parseInt(offset as string),
-          }
+        data: {
+          ...transformedData,
+          message
         }
       };
     } catch (error) {
-      ctx.throw(500, ErrorResponses.SERVER_ERROR('fetch filtered posts'));
-    }
-  },
-
-  // Find One Post
-  async findOne(ctx) {
-    const { id } = ctx.params;
-
-    try {
-      const entity = await strapi.entityService.findOne('api::post.post', id, {
-        ...getEntityServiceOptions({
-          post: true,
-          user: USER_POPULATE,
-          liked_by: LIKED_BY_POPULATE,
-        }),
-      });
-
-      if (!entity) return ctx.notFound(ErrorResponses.NOT_FOUND('Post'));
-
-      const currentUserId = ctx.state.user?.id;
-      return { data: transformPostData(entity, currentUserId) };
-    } catch (error) {
-      ctx.throw(500, ErrorResponses.SERVER_ERROR('fetch post'));
+      console.error('Like toggle error:', error);
+      return ctx.internalServerError('Failed to toggle like');
     }
   },
 
   // Update Post
   async update(ctx) {
     if (!ctx.state.user) {
-      return ctx.unauthorized(ErrorResponses.UNAUTHORIZED);
+      return ctx.unauthorized('Authentication required');
     }
 
     const { id } = ctx.params;
-    const userId = ctx.state.user.id;
-    const { post, caption } = ctx.request.body.data;
+    const { caption } = ctx.request.body.data;
 
     try {
-      // Validate input if post is being updated
-      if (post) {
-        validateMediaInput(post, 10, 'Post');
-      }
-
-      // Check ownership
-      await checkOwnership(strapi, 'api::post.post', id, userId);
-
-      // Update the post
-      const updatedEntity = await strapi.entityService.update('api::post.post', id, {
-        data: { post, caption },
-        populate: {
-          post: true,
-          user: USER_POPULATE,
-          liked_by: LIKED_BY_POPULATE,
-        } as any,
+      // Check if post exists and user owns it
+      const existingPost: any = await strapi.entityService.findOne('api::post.post', id, {
+        populate: ['user']
       });
 
-      return {
-        data: transformPostData(updatedEntity, userId),
-        meta: {
-          message: SuccessResponses.UPDATED('Post')
-        }
-      };
-    } catch (error: any) {
-      if (error.message.includes('must contain') || error.message.includes('cannot contain')) {
-        return ctx.badRequest(ErrorResponses.VALIDATION_ERROR(error.message));
+      if (!existingPost) {
+        return ctx.notFound('Post not found');
       }
-      if (error.message.includes('not found')) {
-        return ctx.notFound(ErrorResponses.NOT_FOUND('Post'));
+
+      if (existingPost.user?.id !== ctx.state.user.id) {
+        return ctx.forbidden('You can only update your own posts');
       }
-      if (error.message.includes('only modify')) {
-        return ctx.forbidden(ErrorResponses.FORBIDDEN);
-      }
-      ctx.throw(500, ErrorResponses.SERVER_ERROR('update post'));
+
+      const updatedPost = await strapi.entityService.update('api::post.post', id, {
+        data: { caption },
+        populate: ['user']
+      } as any);
+
+      const transformedData = await transformPostData(strapi, updatedPost, ctx.state.user.id);
+
+      return { data: transformedData };
+    } catch (error) {
+      console.error('Post update error:', error);
+      return ctx.internalServerError('Failed to update post');
     }
   },
 
   // Delete Post
   async delete(ctx) {
     if (!ctx.state.user) {
-      return ctx.unauthorized(ErrorResponses.UNAUTHORIZED);
+      return ctx.unauthorized('Authentication required');
     }
 
     const { id } = ctx.params;
-    const userId = ctx.state.user.id;
 
     try {
-      // Check ownership
-      await checkOwnership(strapi, 'api::post.post', id, userId);
+      // Check if post exists and user owns it
+      const existingPost: any = await strapi.entityService.findOne('api::post.post', id, {
+        populate: ['user']
+      });
+
+      if (!existingPost) {
+        return ctx.notFound('Post not found');
+      }
+
+      if (existingPost.user?.id !== ctx.state.user.id) {
+        return ctx.forbidden('You can only delete your own posts');
+      }
+
+      // Delete all comments for this post first
+      const comments = await strapi.entityService.findMany('api::comment.comment', {
+        filters: { post: { id: id } }
+      } as any);
+      
+      for (const comment of comments) {
+        await strapi.entityService.delete('api::comment.comment', comment.id);
+      }
 
       // Delete the post
       await strapi.entityService.delete('api::post.post', id);
 
-      return {
-        data: {
-          message: SuccessResponses.DELETED('Post'),
-          id: id,
-        },
-      };
-    } catch (error: any) {
-      if (error.message.includes('not found')) {
-        return ctx.notFound(ErrorResponses.NOT_FOUND('Post'));
-      }
-      if (error.message.includes('only modify')) {
-        return ctx.forbidden(ErrorResponses.FORBIDDEN);
-      }
-      ctx.throw(500, ErrorResponses.SERVER_ERROR('delete post'));
+      return { data: { message: 'Post deleted successfully' } };
+    } catch (error) {
+      console.error('Post delete error:', error);
+      return ctx.internalServerError('Failed to delete post');
     }
-  },
-
-  // Like/Unlike Post
-  async likePost(ctx) {
-    if (!ctx.state.user) {
-      return ctx.unauthorized(ErrorResponses.UNAUTHORIZED);
-    }
-
-    const { id } = ctx.params;
-    const userId = ctx.state.user.id;
-
-    try {
-      const result = await handleLikeToggle(strapi, 'api::post.post', id, userId);
-      return { data: result };
-    } catch (error: any) {
-      if (error.message.includes('not found')) {
-        return ctx.notFound(ErrorResponses.NOT_FOUND('Post'));
-      }
-      ctx.throw(500, ErrorResponses.SERVER_ERROR('like/unlike post'));
-    }
-  },
+  }
 }));
