@@ -16,21 +16,24 @@ import {
 
 // Helper function to transform poll data
 const transformPollData = (entity: any, currentUserId?: number) => {
+  // Calculate total votes from all options
+  const totalVotes = entity.options?.reduce((sum: number, option: any) => sum + (option.voteCount || 0), 0) || 0;
+  
   return {
     id: entity.id,
     question: entity.question,
-    description: entity.description,
-    options: entity.options,
-    creator: {
-      id: entity.creator?.id,
-      username: entity.creator?.username || 'Unknown User',
-      email: entity.creator?.email || '',
+    options: entity.options || [],
+    createdBy: {
+      id: entity.createdBy?.id,
+      username: entity.createdBy?.username || 'Unknown User',
+      email: entity.createdBy?.email || '',
     },
     isActive: entity.isActive,
     allowMultipleVotes: entity.allowMultipleVotes,
-    totalVotes: entity.totalVotes || 0,
+    totalVotes: totalVotes,
     createdAt: entity.createdAt,
     updatedAt: entity.updatedAt,
+    publishedAt: entity.publishedAt,
   };
 };
 

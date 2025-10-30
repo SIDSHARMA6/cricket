@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_poll_poll_options",
+  "info": {
+    "displayName": "poll-option",
+    "description": "Individual poll option with text and vote count"
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true
+    },
+    "voteCount": {
+      "type": "integer",
+      "default": 0,
+      "min": 0
+    }
+  }
+}

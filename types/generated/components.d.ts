@@ -82,6 +82,25 @@ export interface CricketTeamStats extends Struct.ComponentSchema {
   };
 }
 
+export interface PollPollOption extends Struct.ComponentSchema {
+  collectionName: 'components_poll_poll_options';
+  info: {
+    description: 'Individual poll option with text and vote count';
+    displayName: 'poll-option';
+  };
+  attributes: {
+    text: Schema.Attribute.String & Schema.Attribute.Required;
+    voteCount: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+  };
+}
+
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
@@ -89,6 +108,7 @@ declare module '@strapi/strapi' {
       'cricket.innings': CricketInnings;
       'cricket.player-stats': CricketPlayerStats;
       'cricket.team-stats': CricketTeamStats;
+      'poll.poll-option': PollPollOption;
     }
   }
 }

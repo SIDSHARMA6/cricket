@@ -778,19 +778,21 @@ export interface ApiPollPoll extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    creator: Schema.Attribute.Relation<
-      'manyToOne',
-      'plugin::users-permissions.user'
-    >;
-    description: Schema.Attribute.Text;
     isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::poll.poll'> &
       Schema.Attribute.Private;
-    options: Schema.Attribute.JSON & Schema.Attribute.Required;
+    options: Schema.Attribute.Component<'poll.poll-option', true> &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 10;
+          min: 2;
+        },
+        number
+      >;
     publishedAt: Schema.Attribute.DateTime;
     question: Schema.Attribute.String & Schema.Attribute.Required;
-    totalVotes: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

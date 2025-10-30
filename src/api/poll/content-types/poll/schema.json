@@ -16,14 +16,15 @@
       "type": "string",
       "required": true
     },
-    "description": {
-      "type": "text"
-    },
     "options": {
-      "type": "json",
-      "required": true
+      "type": "component",
+      "repeatable": true,
+      "component": "poll.poll-option",
+      "required": true,
+      "min": 2,
+      "max": 10
     },
-    "creator": {
+    "createdBy": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user"
@@ -35,10 +36,6 @@
     "allowMultipleVotes": {
       "type": "boolean",
       "default": false
-    },
-    "totalVotes": {
-      "type": "integer",
-      "default": 0
     }
   }
 }
