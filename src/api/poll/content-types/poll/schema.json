@@ -8,7 +8,7 @@
     "description": "Community polls for cricket discussions"
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
