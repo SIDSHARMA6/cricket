@@ -29,6 +29,10 @@
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user"
     },
+    "votes": {
+      "type": "json",
+      "default": []
+    },
     "isActive": {
       "type": "boolean",
       "default": true

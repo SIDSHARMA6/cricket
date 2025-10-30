@@ -723,44 +723,6 @@ export interface ApiPlayerProfilePlayerProfile
   };
 }
 
-export interface ApiPollResponsePollResponse
-  extends Struct.CollectionTypeSchema {
-  collectionName: 'poll_responses';
-  info: {
-    description: 'User responses to polls';
-    displayName: 'Poll Response';
-    pluralName: 'poll-responses';
-    singularName: 'poll-response';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    comment: Schema.Attribute.Text;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::poll-response.poll-response'
-    > &
-      Schema.Attribute.Private;
-    poll: Schema.Attribute.Relation<'manyToOne', 'api::poll.poll'> &
-      Schema.Attribute.Required;
-    publishedAt: Schema.Attribute.DateTime;
-    selectedOptions: Schema.Attribute.JSON & Schema.Attribute.Required;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    user: Schema.Attribute.Relation<
-      'manyToOne',
-      'plugin::users-permissions.user'
-    > &
-      Schema.Attribute.Required;
-  };
-}
-
 export interface ApiPollPoll extends Struct.CollectionTypeSchema {
   collectionName: 'polls';
   info: {
@@ -796,6 +758,7 @@ export interface ApiPollPoll extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    votes: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
   };
 }
 
@@ -1390,7 +1353,6 @@ declare module '@strapi/strapi' {
       'api::match.match': ApiMatchMatch;
       'api::notification.notification': ApiNotificationNotification;
       'api::player-profile.player-profile': ApiPlayerProfilePlayerProfile;
-      'api::poll-response.poll-response': ApiPollResponsePollResponse;
       'api::poll.poll': ApiPollPoll;
       'api::post.post': ApiPostPost;
       'api::story.story': ApiStoryStory;
