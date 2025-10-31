@@ -18,6 +18,32 @@ const transformPostData = async (strapi: any, entity: any, currentUserId?: numbe
   // Check if current user liked this post
   const isLiked = currentUserId ? likedBy.some((user: any) => user.id === currentUserId) : false;
 
+  // Transform media field to mediaUrls array
+  let mediaUrls = [];
+  if (entity.post && Array.isArray(entity.post)) {
+    mediaUrls = entity.post.map((media: any) => {
+      if (typeof media === 'object' && media.url) {
+        // Media is already populated with full data
+        return {
+          id: media.id,
+          url: media.url,
+          name: media.name,
+          mime: media.mime,
+          size: media.size
+        };
+      } else if (typeof media === 'number' || typeof media === 'string') {
+        // Media is just an ID, we need to construct URL
+        return {
+          id: media,
+          url: `/uploads/${media}`, // Basic URL construction
+          name: `media_${media}`,
+          mime: 'unknown'
+        };
+      }
+      return media;
+    });
+  }
+
   return {
     id: entity.id,
     caption: entity.caption || '',
@@ -26,7 +52,7 @@ const transformPostData = async (strapi: any, entity: any, currentUserId?: numbe
       username: entity.user?.username || 'Unknown User',
       email: entity.user?.email || ''
     },
-    mediaUrls: entity.post || [],
+    mediaUrls,
     likeCount: entity.likeCount || 0,
     commentCount: entity.commentCount || 0,
     isLiked,
@@ -54,7 +80,7 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
           likeCount: 0,
           commentCount: 0
         },
-        populate: ['user', 'liked_by']
+        populate: ['user', 'liked_by', 'post']
       } as any);
 
       const transformedData = await transformPostData(strapi, entity, ctx.state.user.id);
@@ -77,7 +103,7 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
       const currentUserId = ctx.state.user?.id;
 
       const posts = await strapi.entityService.findMany('api::post.post', {
-        populate: ['user', 'liked_by'],
+        populate: ['user', 'liked_by', 'post'],
         sort: { createdAt: 'desc' }
       } as any);
 
@@ -99,7 +125,7 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
 
     try {
       const post = await strapi.entityService.findOne('api::post.post', id, {
-        populate: ['user', 'liked_by']
+        populate: ['user', 'liked_by', 'post']
       } as any);
 
       if (!post) {

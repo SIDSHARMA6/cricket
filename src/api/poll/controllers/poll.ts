@@ -6,29 +6,83 @@ import { factories } from '@strapi/strapi'
 
 // Helper function to calculate vote counts and percentages
 const calculatePollStats = (poll: any, currentUserId?: number) => {
-  const votes = poll.votes || [];
-  const totalVotes = votes.length;
+  if (!poll || typeof poll !== 'object') {
+    console.error('calculatePollStats received invalid poll:', poll);
+    return null;
+  }
 
-  const optionStats = poll.options.map((option: any, index: number) => {
-    const optionVotes = votes.filter((vote: any) => vote.optionIndex === index).length;
-    const percentage = totalVotes > 0 ? Math.round((optionVotes / totalVotes) * 100) : 0;
+  try {
+    // Ensure we have a valid poll object with minimum required fields
+    if (!poll.id) {
+      console.error('Poll object missing id field');
+      return null;
+    }
+
+    // Handle votes
+    let votes: any[] = [];
+    try {
+      if (typeof poll.votes === 'string') {
+        votes = JSON.parse(poll.votes);
+      } else if (Array.isArray(poll.votes)) {
+        votes = poll.votes;
+      }
+    } catch (e) {
+      console.error(`Error parsing votes for poll ${poll.id}:`, e);
+    }
+
+    // Handle options
+    let options: any[] = [];
+    try {
+      if (typeof poll.options === 'string') {
+        options = JSON.parse(poll.options);
+      } else if (Array.isArray(poll.options)) {
+        options = poll.options;
+      }
+    } catch (e) {
+      console.error(`Error parsing options for poll ${poll.id}:`, e);
+    }
+
+    if (!Array.isArray(options)) {
+      console.error(`Poll ${poll.id} has invalid options, defaulting to empty array`);
+      options = [];
+    }
+
+    const totalVotes = votes.length;
+
+    const optionStats = options.map((option: any, index: number) => {
+      // Normalize option shape
+      const opt = typeof option === 'string'
+        ? { id: index, text: option, voteCount: 0 }
+        : (option || { id: index, text: '', voteCount: 0 });
+
+      const optionVotes = Array.isArray(votes)
+        ? votes.filter((vote: any) => vote.optionIndex === index).length
+        : 0;
+
+      const percentage = totalVotes > 0 ? Math.round((optionVotes / totalVotes) * 100) : 0;
+
+      return {
+        ...opt,
+        votes: optionVotes,
+        percentage
+      };
+    });
+
+    const userVote = currentUserId && Array.isArray(votes)
+      ? votes.find((vote: any) => vote.userId === currentUserId)
+      : null;
 
     return {
-      ...option,
-      votes: optionVotes,
-      percentage
+      ...poll,
+      options: optionStats,
+      totalVotes,
+      hasVoted: !!userVote,
+      userVote: userVote?.optionIndex
     };
-  });
-
-  const userVote = currentUserId ? votes.find((vote: any) => vote.userId === currentUserId) : null;
-
-  return {
-    ...poll,
-    options: optionStats,
-    totalVotes,
-    hasVoted: !!userVote,
-    userVote: userVote?.optionIndex
-  };
+  } catch (error) {
+    console.error(`Error in calculatePollStats for poll ${poll?.id}:`, error);
+    return null;
+  }
 };
 
 export default factories.createCoreController('api::poll.poll', ({ strapi }) => ({
@@ -73,8 +127,9 @@ export default factories.createCoreController('api::poll.poll', ({ strapi }) => 
         populate: ['createdBy']
       } as any);
 
+      const pollStats = calculatePollStats(entity, ctx.state.user.id);
       return {
-        data: calculatePollStats(entity, ctx.state.user.id)
+        data: pollStats || entity
       };
     } catch (error) {
       console.error('Poll creation error:', error);
@@ -92,8 +147,11 @@ export default factories.createCoreController('api::poll.poll', ({ strapi }) => 
         sort: { createdAt: 'desc' }
       } as any);
 
-      // Calculate stats for each poll
-      const pollsWithStats = polls.map((poll: any) => calculatePollStats(poll, currentUserId));
+      // Calculate stats for each poll with null safety
+      const pollsWithStats = polls.map((poll: any) => {
+        const stats = calculatePollStats(poll, currentUserId);
+        return stats || poll; // Fallback to original poll if stats calculation fails
+      }).filter(Boolean); // Remove any null results
 
       return { data: pollsWithStats };
     } catch (error) {
@@ -120,7 +178,7 @@ export default factories.createCoreController('api::poll.poll', ({ strapi }) => 
 
       return {
         data: {
-          ...pollWithStats,
+          ...(pollWithStats || poll),
           voters: ((poll as any).votes || []).map((vote: any) => ({
             userId: vote.userId,
             username: vote.username,
@@ -159,12 +217,37 @@ export default factories.createCoreController('api::poll.poll', ({ strapi }) => 
         return ctx.badRequest('This poll is no longer active');
       }
 
+      // Parse options safely
+      let options = [];
+      try {
+        if (typeof poll.options === 'string') {
+          options = JSON.parse(poll.options);
+        } else if (Array.isArray(poll.options)) {
+          options = poll.options;
+        }
+      } catch (e) {
+        console.error('Error parsing poll options:', e);
+        return ctx.badRequest('Invalid poll options');
+      }
+
       // Validate option index
-      if (typeof optionIndex !== 'number' || optionIndex < 0 || optionIndex >= poll.options.length) {
+      if (typeof optionIndex !== 'number' || optionIndex < 0 || optionIndex >= options.length) {
         return ctx.badRequest('Invalid option selected');
       }
 
-      const votes = poll.votes || [];
+      // Parse votes safely
+      let votes = [];
+      try {
+        if (typeof poll.votes === 'string') {
+          votes = JSON.parse(poll.votes);
+        } else if (Array.isArray(poll.votes)) {
+          votes = poll.votes;
+        }
+      } catch (e) {
+        console.error('Error parsing poll votes:', e);
+        votes = [];
+      }
+
       const existingVoteIndex = votes.findIndex((vote: any) => vote.userId === userId);
 
       let updatedVotes;
@@ -203,7 +286,7 @@ export default factories.createCoreController('api::poll.poll', ({ strapi }) => 
 
       return {
         data: {
-          ...pollWithStats,
+          ...(pollWithStats || updatedPoll),
           message
         }
       };
@@ -243,7 +326,8 @@ export default factories.createCoreController('api::poll.poll', ({ strapi }) => 
         populate: ['createdBy']
       } as any);
 
-      return { data: calculatePollStats(updatedEntity, ctx.state.user.id) };
+      const pollStats = calculatePollStats(updatedEntity, ctx.state.user.id);
+      return { data: pollStats || updatedEntity };
     } catch (error) {
       console.error('Poll update error:', error);
       return ctx.internalServerError('Failed to update poll');

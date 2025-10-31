@@ -18,7 +18,8 @@
     },
     "options": {
       "type": "json",
-      "required": true
+      "required": true,
+      "default": []
     },
     "createdBy": {
       "type": "relation",

@@ -20,10 +20,13 @@
     "money": {
       "type": "string"
     },
-    "teamA": {
-      "type": "integer"
+    "team_name_a": {
+      "type": "string"
     },
-    "teamB": {
+    "team_name_b": {
+      "type": "string"
+    },
+    "total_Players_need": {
       "type": "integer"
     }
   }

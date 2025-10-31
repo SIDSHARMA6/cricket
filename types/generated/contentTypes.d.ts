@@ -572,8 +572,9 @@ export interface ApiMatchMatch extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     money: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
-    teamA: Schema.Attribute.Integer;
-    teamB: Schema.Attribute.Integer;
+    team_name_a: Schema.Attribute.String;
+    team_name_b: Schema.Attribute.String;
+    total_Players_need: Schema.Attribute.Integer;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -744,7 +745,9 @@ export interface ApiPollPoll extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::poll.poll'> &
       Schema.Attribute.Private;
-    options: Schema.Attribute.JSON & Schema.Attribute.Required;
+    options: Schema.Attribute.JSON &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<[]>;
     publishedAt: Schema.Attribute.DateTime;
     question: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
