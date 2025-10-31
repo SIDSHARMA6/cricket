@@ -1,4 +1,4 @@
-# 🚀 Cricket App API Documentation
+# 📱 Instagram & WhatsApp-like API Documentation
 
 ## Base URL
 ```
@@ -6,14 +6,14 @@ http://localhost:1337/api
 ```
 
 ## Authentication
-Most endpoints require JWT authentication. Include the token in the Authorization header:
+All endpoints require JWT authentication. Include the token in the Authorization header:
 ```
 Authorization: Bearer <your-jwt-token>
 ```
 
 ---
 
-## �  Instagram-like Post API
+## 📸 Instagram-like Posts API
 
 ### 1. Create Post
 **POST** `/posts`
@@ -130,16 +130,80 @@ Authorization: Bearer <your-jwt-token>
       "email": "player123445@example.com"
     },
     "mediaUrls": [],
-    "likeCount": 0,
-    "commentCount": 0,
-    "isLiked": false,
+    "likeCount": 1,
+    "commentCount": 2,
+    "isLiked": true,
     "createdAt": "2025-10-30T16:20:40.997Z",
-    "updatedAt": "2025-10-30T16:28:55.261Z"
+    "updatedAt": "2025-10-30T16:28:38.992Z"
   }
 }
 ```
 
-### 4. Like/Unlike Post (Instagram Style)
+### 4. Update Post
+**PUT** `/posts/:id`
+
+**Headers:**
+```json
+{
+  "Authorization": "Bearer <jwt-token>",
+  "Content-Type": "application/json"
+}
+```
+
+**Request Body:**
+```json
+{
+  "data": {
+    "caption": "Updated: My first Instagram-like post! 🏏✨"
+  }
+}
+```
+
+**Response (200):**
+```json
+{
+  "data": {
+    "id": 1,
+    "caption": "Updated: My first Instagram-like post! 🏏✨",
+    "user": {
+      "id": 5,
+      "username": "player1235444",
+      "email": "player123445@example.com"
+    },
+    "mediaUrls": [],
+    "likeCount": 1,
+    "commentCount": 2,
+    "isLiked": true,
+    "createdAt": "2025-10-30T16:20:40.997Z",
+    "updatedAt": "2025-10-30T16:35:12.123Z"
+  }
+}
+```
+
+### 5. Delete Post
+**DELETE** `/posts/:id`
+
+**Headers:**
+```json
+{
+  "Authorization": "Bearer <jwt-token>"
+}
+```
+
+**Response (200):**
+```json
+{
+  "data": {
+    "message": "Post deleted successfully"
+  }
+}
+```
+
+---
+
+## ❤️ Instagram-like Likes API
+
+### 1. Like/Unlike Post (Toggle)
 **POST** `/posts/:id/like`
 
 **Headers:**
@@ -150,7 +214,7 @@ Authorization: Bearer <your-jwt-token>
 }
 ```
 
-**Response (200) - Like:**
+**Response - Like (200):**
 ```json
 {
   "data": {
@@ -172,7 +236,7 @@ Authorization: Bearer <your-jwt-token>
 }
 ```
 
-**Response (200) - Unlike:**
+**Response - Unlike (200):**
 ```json
 {
   "data": {
@@ -194,69 +258,9 @@ Authorization: Bearer <your-jwt-token>
 }
 ```
 
-### 5. Update Post
-**PUT** `/posts/:id`
-
-**Headers:**
-```json
-{
-  "Authorization": "Bearer <jwt-token>",
-  "Content-Type": "application/json"
-}
-```
-
-**Request Body:**
-```json
-{
-  "data": {
-    "caption": "Updated caption for my post! 🏏✨"
-  }
-}
-```
-
-**Response (200):**
-```json
-{
-  "data": {
-    "id": 1,
-    "caption": "Updated caption for my post! 🏏✨",
-    "user": {
-      "id": 5,
-      "username": "player1235444",
-      "email": "player123445@example.com"
-    },
-    "mediaUrls": [],
-    "likeCount": 0,
-    "commentCount": 0,
-    "isLiked": false,
-    "createdAt": "2025-10-30T16:20:40.997Z",
-    "updatedAt": "2025-10-30T16:35:00.000Z"
-  }
-}
-```
-
-### 6. Delete Post
-**DELETE** `/posts/:id`
-
-**Headers:**
-```json
-{
-  "Authorization": "Bearer <jwt-token>"
-}
-```
-
-**Response (200):**
-```json
-{
-  "data": {
-    "message": "Post deleted successfully"
-  }
-}
-```
-
 ---
 
-## 💬 Instagram-like Comment API
+## 💬 Instagram-like Comments API
 
 ### 1. Create Comment
 **POST** `/comments`
@@ -362,7 +366,27 @@ Authorization: Bearer <your-jwt-token>
 }
 ```
 
-### 3. Get Single Comment
+### 3. Get Comments for Story
+**GET** `/comments?story=:storyId`
+
+**Headers:**
+```json
+{
+  "Authorization": "Bearer <jwt-token>"
+}
+```
+
+**Request Body:**
+```json
+{
+  "data": {
+    "text": "Love this story! So inspiring! ✨",
+    "story": 1
+  }
+}
+```
+
+### 4. Get Single Comment
 **GET** `/comments/:id`
 
 **Headers:**
@@ -394,7 +418,7 @@ Authorization: Bearer <your-jwt-token>
 }
 ```
 
-### 4. Update Comment
+### 5. Update Comment
 **PUT** `/comments/:id`
 
 **Headers:**
@@ -431,7 +455,7 @@ Authorization: Bearer <your-jwt-token>
     },
     "story": null,
     "createdAt": "2025-10-30T16:26:13.152Z",
-    "updatedAt": "2025-10-30T16:35:00.000Z"
+    "updatedAt": "2025-10-30T16:35:45.789Z"
   },
   "meta": {
     "message": "Comment updated successfully"
@@ -439,7 +463,7 @@ Authorization: Bearer <your-jwt-token>
 }
 ```
 
-### 5. Delete Comment
+### 6. Delete Comment
 **DELETE** `/comments/:id`
 
 **Headers:**
@@ -461,7 +485,7 @@ Authorization: Bearer <your-jwt-token>
 
 ---
 
-## 📊 WhatsApp-like Poll API
+## 📊 WhatsApp-like Polls API
 
 ### 1. Create Poll
 **POST** `/polls`
@@ -494,13 +518,6 @@ Authorization: Bearer <your-jwt-token>
   "data": {
     "id": 1,
     "question": "Which is your favorite cricket format?",
-    "createdAt": "2025-10-30T15:42:23.139Z",
-    "updatedAt": "2025-10-30T15:42:23.139Z",
-    "publishedAt": "2025-10-30T15:42:23.129Z",
-    "locale": null,
-    "isActive": true,
-    "allowMultipleVotes": false,
-    "votes": [],
     "options": [
       {
         "id": 0,
@@ -525,8 +542,15 @@ Authorization: Bearer <your-jwt-token>
       }
     ],
     "createdBy": null,
+    "isActive": true,
+    "allowMultipleVotes": false,
+    "votes": [],
     "totalVotes": 0,
-    "hasVoted": false
+    "hasVoted": false,
+    "createdAt": "2025-10-30T15:42:23.139Z",
+    "updatedAt": "2025-10-30T15:42:23.139Z",
+    "publishedAt": "2025-10-30T15:42:23.129Z",
+    "locale": null
   }
 }
 ```
@@ -548,20 +572,6 @@ Authorization: Bearer <your-jwt-token>
     {
       "id": 1,
       "question": "Which is your favorite cricket format?",
-      "createdAt": "2025-10-30T15:42:23.139Z",
-      "updatedAt": "2025-10-30T15:44:53.066Z",
-      "publishedAt": "2025-10-30T15:44:53.054Z",
-      "locale": null,
-      "isActive": true,
-      "allowMultipleVotes": false,
-      "votes": [
-        {
-          "userId": 5,
-          "username": "player1235444",
-          "optionIndex": 2,
-          "votedAt": "2025-10-30T15:44:53.051Z"
-        }
-      ],
       "options": [
         {
           "id": 0,
@@ -586,9 +596,23 @@ Authorization: Bearer <your-jwt-token>
         }
       ],
       "createdBy": null,
+      "isActive": true,
+      "allowMultipleVotes": false,
+      "votes": [
+        {
+          "userId": 5,
+          "username": "player1235444",
+          "optionIndex": 2,
+          "votedAt": "2025-10-30T15:44:53.051Z"
+        }
+      ],
       "totalVotes": 1,
       "hasVoted": true,
-      "userVote": 2
+      "userVote": 2,
+      "createdAt": "2025-10-30T15:42:23.139Z",
+      "updatedAt": "2025-10-30T15:44:53.066Z",
+      "publishedAt": "2025-10-30T15:44:53.054Z",
+      "locale": null
     }
   ]
 }
@@ -610,20 +634,6 @@ Authorization: Bearer <your-jwt-token>
   "data": {
     "id": 1,
     "question": "Which is your favorite cricket format?",
-    "createdAt": "2025-10-30T15:42:23.139Z",
-    "updatedAt": "2025-10-30T15:44:53.066Z",
-    "publishedAt": "2025-10-30T15:44:53.054Z",
-    "locale": null,
-    "isActive": true,
-    "allowMultipleVotes": false,
-    "votes": [
-      {
-        "userId": 5,
-        "username": "player1235444",
-        "optionIndex": 2,
-        "votedAt": "2025-10-30T15:44:53.051Z"
-      }
-    ],
     "options": [
       {
         "id": 0,
@@ -648,6 +658,16 @@ Authorization: Bearer <your-jwt-token>
       }
     ],
     "createdBy": null,
+    "isActive": true,
+    "allowMultipleVotes": false,
+    "votes": [
+      {
+        "userId": 5,
+        "username": "player1235444",
+        "optionIndex": 2,
+        "votedAt": "2025-10-30T15:44:53.051Z"
+      }
+    ],
     "totalVotes": 1,
     "hasVoted": true,
     "userVote": 2,
@@ -657,12 +677,16 @@ Authorization: Bearer <your-jwt-token>
         "username": "player1235444",
         "selectedOption": 2
       }
-    ]
+    ],
+    "createdAt": "2025-10-30T15:42:23.139Z",
+    "updatedAt": "2025-10-30T15:44:53.066Z",
+    "publishedAt": "2025-10-30T15:44:53.054Z",
+    "locale": null
   }
 }
 ```
 
-### 4. Vote on Poll (WhatsApp Style)
+### 4. Vote on Poll (WhatsApp style)
 **POST** `/polls/:id/vote`
 
 **Headers:**
@@ -680,16 +704,36 @@ Authorization: Bearer <your-jwt-token>
 }
 ```
 
-**Response (200) - First Vote:**
+**Response - First Vote (200):**
 ```json
 {
   "data": {
     "id": 1,
     "question": "Which is your favorite cricket format?",
-    "createdAt": "2025-10-30T15:42:23.139Z",
-    "updatedAt": "2025-10-30T15:43:54.980Z",
-    "publishedAt": "2025-10-30T15:43:54.966Z",
-    "locale": null,
+    "options": [
+      {
+        "id": 0,
+        "text": "Test Cricket",
+        "voteCount": 0,
+        "votes": 1,
+        "percentage": 100
+      },
+      {
+        "id": 1,
+        "text": "ODI",
+        "voteCount": 0,
+        "votes": 0,
+        "percentage": 0
+      },
+      {
+        "id": 2,
+        "text": "T20",
+        "voteCount": 0,
+        "votes": 0,
+        "percentage": 0
+      }
+    ],
+    "createdBy": null,
     "isActive": true,
     "allowMultipleVotes": false,
     "votes": [
@@ -700,13 +744,27 @@ Authorization: Bearer <your-jwt-token>
         "votedAt": "2025-10-30T15:43:54.964Z"
       }
     ],
+    "totalVotes": 1,
+    "hasVoted": true,
+    "userVote": 0,
+    "message": "Vote recorded successfully"
+  }
+}
+```
+
+**Response - Change Vote (200):**
+```json
+{
+  "data": {
+    "id": 1,
+    "question": "Which is your favorite cricket format?",
     "options": [
       {
         "id": 0,
         "text": "Test Cricket",
         "voteCount": 0,
-        "votes": 1,
-        "percentage": 100
+        "votes": 0,
+        "percentage": 0
       },
       {
         "id": 1,
@@ -719,29 +777,11 @@ Authorization: Bearer <your-jwt-token>
         "id": 2,
         "text": "T20",
         "voteCount": 0,
-        "votes": 0,
-        "percentage": 0
+        "votes": 1,
+        "percentage": 100
       }
     ],
     "createdBy": null,
-    "totalVotes": 1,
-    "hasVoted": true,
-    "userVote": 0,
-    "message": "Vote recorded successfully"
-  }
-}
-```
-
-**Response (200) - Change Vote:**
-```json
-{
-  "data": {
-    "id": 1,
-    "question": "Which is your favorite cricket format?",
-    "createdAt": "2025-10-30T15:42:23.139Z",
-    "updatedAt": "2025-10-30T15:44:53.066Z",
-    "publishedAt": "2025-10-30T15:44:53.054Z",
-    "locale": null,
     "isActive": true,
     "allowMultipleVotes": false,
     "votes": [
@@ -752,30 +792,6 @@ Authorization: Bearer <your-jwt-token>
         "votedAt": "2025-10-30T15:44:53.051Z"
       }
     ],
-    "options": [
-      {
-        "id": 0,
-        "text": "Test Cricket",
-        "voteCount": 0,
-        "votes": 0,
-        "percentage": 0
-      },
-      {
-        "id": 1,
-        "text": "ODI",
-        "voteCount": 0,
-        "votes": 0,
-        "percentage": 0
-      },
-      {
-        "id": 2,
-        "text": "T20",
-        "voteCount": 0,
-        "votes": 1,
-        "percentage": 100
-      }
-    ],
-    "createdBy": null,
     "totalVotes": 1,
     "hasVoted": true,
     "userVote": 2,
@@ -811,10 +827,30 @@ Authorization: Bearer <your-jwt-token>
   "data": {
     "id": 1,
     "question": "Updated: Which is your favorite cricket format?",
-    "createdAt": "2025-10-30T15:42:23.139Z",
-    "updatedAt": "2025-10-30T15:50:00.000Z",
-    "publishedAt": "2025-10-30T15:44:53.054Z",
-    "locale": null,
+    "options": [
+      {
+        "id": 0,
+        "text": "Test Cricket",
+        "voteCount": 0,
+        "votes": 0,
+        "percentage": 0
+      },
+      {
+        "id": 1,
+        "text": "ODI",
+        "voteCount": 0,
+        "votes": 0,
+        "percentage": 0
+      },
+      {
+        "id": 2,
+        "text": "T20",
+        "voteCount": 0,
+        "votes": 1,
+        "percentage": 100
+      }
+    ],
+    "createdBy": null,
     "isActive": true,
     "allowMultipleVotes": false,
     "votes": [
@@ -825,44 +861,20 @@ Authorization: Bearer <your-jwt-token>
         "votedAt": "2025-10-30T15:44:53.051Z"
       }
     ],
-    "options": [
-      {
-        "id": 0,
-       t",
-      0,
-        "votes":
-        "perce
-      },
-      {
-      ": 1,
-        "text": "ODI",
-        "voteCount": 0,
-        "votes": 0,
-        "percentage": 0
-      },
-    
-        "id: 2,
-        "text": "T20",
-   
- 
-   
-
-    ],
-    "createdBy": null,
-
-    "hasVote
-    "us": 2
+    "totalVotes": 1,
+    "hasVoted": true,
+    "userVote": 2
   }
 }
 ```
 
- Poll
-**DELETE** `/polls/:i
+### 6. Delete Poll
+**DELETE** `/polls/:id`
 
-ders:**
+**Headers:**
 ```json
 {
- oken>"
+  "Authorization": "Bearer <jwt-token>"
 }
 ```
 
@@ -870,273 +882,75 @@ ders:**
 ```json
 {
   "data": {
-    "message": "Po"
+    "message": "Poll deleted successfully"
   }
 }
 ```
 
 ---
 
-## 📖 Story API
+## 🎯 Key Features
 
-### 1. CrStory
-**POST** `/stories`
+### Instagram-like Features:
+- ✅ **Real-time Like Count** - Updates instantly when liked/unliked
+- ✅ **User Like Status** - Shows if current user liked the post (`isLiked`)
+- ✅ **Comment Count** - Shows total comments on each post
+- ✅ **Toggle Like/Unlike** - Double-tap behavior like Instagram
+- ✅ **Comment Threading** - Comments linked to specific posts
+- ✅ **User Attribution** - Shows who liked/commented
+- ✅ **Chronological Feed** - Posts sorted by newest first
 
-**Headers:**
-```json
-{
-  "Authorization":
-  "Content-Type"n"
-}
-```
-
-**Request Body:**
-```json
-{
-  "data": {
-    "story": [1, 2, 3]
-  }
-}
-```
-
-**Response (201):**
-```json
-{
-  "data": {
-    "": 1,
-   
- e.com",
-   : [
-    {
-        "url": "http:/pg",
-        "name": "ima
-/jpeg",
-        "siz: 1024000
-      }
- ,
-    "likesCount": 0,
- ,
-   
-000Z"
-  },
-  "meta": {
- y"
-  }
-}
-```
-
-### 2. Get All S)
-**GET**0`
-
-**Headers:**
-```json
-{
-  "Authoken>"
-}
-```
-
-**Respon
-```json
-{
-  "data": [
-    {
-      "1,
-      ,
-      "email": ",
-      "mediaUrls": [
-        {
-          "url": "http://localhospg",
-      1.jpg",
-          "mime": "im
-          "size": 1024000
-        }
-      ],
-      "likesCount": 5,
-   true,
- .000Z",
-   "
-
-  ],
-  "meta": {
-{
-      "page"
-      "": 10,
- ,
-      "total": 50
-    }
- 
-}
-```
-
-### 3. 
-*`
-
-**Headers:**
-```json
-{
-  "n>"
-}
-```
-
-**Response (200):**
-```json
-{
-  "data": {
-    "isLikede,
-    "likesCount": 6
-  }
-}
-```
+### WhatsApp-like Poll Features:
+- ✅ **Single Vote per User** - One vote per poll (can change vote)
+- ✅ **Real-time Percentages** - Shows vote distribution
+- ✅ **Vote Change** - Users can change their vote anytime
+- ✅ **Vote Tracking** - Shows who voted for what
+- ✅ **Anonymous Results** - Option-based results display
+- ✅ **Live Vote Count** - Updates in real-time
 
 ---
 
-## 💬 at API
+## ❌ Error Responses
 
-### 1. Send Message
-**POST** `/chats`
-
-**Headers:**
-```json
-{
-  "Authorization": "Bearer <jwt-token>",
-  "/json"
-}
-```
-
-**Request Body:**
-```json
-{
-  "data": {
-    "mech?",
- ",
-    "attachments": [1, 2],
- yTo": 5,
-   
-"]
-  }
-}
-``
-
-**Response (201):**
-```json
-{
- : {
-   
-
-    "messageType": ",
-    "sender": {
-
-      "userne",
-      "
-    },
-    "attachmentUrls": [
-      {
- 1.jpg",
-   ",
-jpeg",
-        "size": 1000
-      }
- 
-    "replyTo": {
- 5,
-   ",
-ane_doe"
-    },
-    "re},
- ": [
-      {
-        "id":10,
-        "usern"player1"
-      }
-    ],
-    "isEdited": fa
-    "edit: null,
-    "isDeleted": f
-    "deletedAt": null,
-    "tags": ["cricketh"],
-    "creat",
-    "upda
-  },
-  "meta": {
-    "message": "Messally"
-  }
-}
-```
-
-### 2. Add/Remove Re
-**POST** n`
-
-**Headers:**
-```json
-{
-  "Authorization": "Bearer <jwt-tok>",
-  "Conten"
-}
-```
-
-**Request Body:**
-```json
-{
-  "emoji": "👍"
-}
-```
-
-:**
-```json
-{
-  "data": {
-
-      "👍": [1, 2, 3],
-      "🏏": [4, 5]
-},
-    "message"
-  }
-}
-```
-
----
-
-s
-
-### 400st
-`n
-{
-  "error": {
-    "status":
-   Error",
- ired"
-  }
-}
-```
-
-#orized
+### 400 Bad Request
 ```json
 {
   "error": {
-   ": 401,
- ",
-   "
+    "status": 400,
+    "name": "BadRequestError",
+    "message": "Poll must have at least 2 options"
   }
 }
 ```
 
-### 403 Foren
+### 401 Unauthorized
 ```json
 {
   "error": {
-    "status": 
+    "status": 401,
+    "name": "UnauthorizedError",
+    "message": "Authentication required"
+  }
+}
+```
+
+### 403 Forbidden
+```json
+{
+  "error": {
+    "status": 403,
     "name": "ForbiddenError",
-    "message": "You can only upda
+    "message": "You can only update your own posts"
   }
 }
 ```
 
-### 40und
+### 404 Not Found
 ```json
 {
   "error": {
-    
-    "name":
+    "status": 404,
+    "name": "NotFoundError",
     "message": "Post not found"
   }
 }
@@ -1146,66 +960,30 @@ s
 ```json
 {
   "error": {
-    "st,
- r",
+    "status": 500,
+    "name": "InternalServerError",
     "message": "Failed to create post"
- 
+  }
 }
 ```
 
 ---
 
-es
+## 📊 API Summary
 
-### Instures:
--
-- ✅ **Togglnstagram
-- ✅ *ution
-- ✅ **User Likost
-- ✅ **Chronological Feed** - Posts sorted by newest first
-- ✅ **User Attrinfo
+### Total Endpoints: 18
+- **Posts API**: 5 endpoints
+- **Likes API**: 1 endpoint (toggle)
+- **Comments API**: 6 endpoints
+- **Polls API**: 6 endpoints
 
-### WhatsApp-like Poll Features:
-- ✅ **Single Vote per User** - User
-- ✅ **Renstantly
-- ✅ **Vote Chanme
-- ✅ **Vote Trackat option
-- ✅ **Simple Text Options** - Clean, simple poll opt
-- ✅ **Vo
+### Tested & Working Features:
+- ✅ Instagram-like post creation and feed
+- ✅ Real-time like/unlike functionality
+- ✅ Comment system with threading
+- ✅ WhatsApp-like polls with voting
+- ✅ Vote changing and real-time percentages
+- ✅ User authentication and authorization
+- ✅ Error handling and validation
 
----
-
-## 📊
-
-### Total W
-- **Posts (Instagra
-- **Comments (Indpoints  
-- **Polls (WhatsApp-loints
-- **Stories**: 3+ endpoints
-- **Chat**: 2+ enpoints
-
-###es:
--
-- ✅le
-ons
-- ✅ **Poll Creation** - W
-- ✅ **Poll Voting** - Vality
-ges
-- ✅ **User Aem
-- ✅ **U
-
----
-
-## n Ready
-
-All endpoints are peady with:
-- ✅ **Cion**
--**
-- ✅ **Secur**
-- ✅ **Real-t
-- ✅ **User authentication**
-- ✅ **Rate liiting**
-- ✅ **InstagraX**
-- ✅ **WhatsApp-like polls**
-
-**The !** 🎉llse poWhatsApp-liknd mments a posts/coagram-like with Instenceperidia exsocial memplete a coow provides API n
+All endpoints are production-ready and fully tested! 🚀
