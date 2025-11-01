@@ -4,4 +4,18 @@ export default ({ env }) => ({
   app: {
     keys: env.array('APP_KEYS'),
   },
+  url: env('PUBLIC_URL', 'http://localhost:1337'),
+  proxy: env.bool('IS_PROXIED', false),
+  cron: {
+    enabled: env.bool('CRON_ENABLED', false),
+  },
+  admin: {
+    auth: {
+      secret: env('ADMIN_JWT_SECRET'),
+    },
+  },
+  // Webhook configuration
+  webhooks: {
+    populateRelations: env.bool('WEBHOOKS_POPULATE_RELATIONS', false),
+  },
 });

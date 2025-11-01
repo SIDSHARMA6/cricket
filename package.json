@@ -12,7 +12,10 @@
     "start": "strapi start",
     "strapi": "strapi",
     "upgrade": "npx @strapi/upgrade latest",
-    "upgrade:dry": "npx @strapi/upgrade latest --dry"
+    "upgrade:dry": "npx @strapi/upgrade latest --dry",
+    "verify": "node scripts/verify-production.js",
+    "lint": "echo 'Linting not configured'",
+    "test": "echo 'Tests not configured'"
   },
   "dependencies": {
     "@strapi/plugin-cloud": "5.29.0",

@@ -34,4 +34,6 @@ export default [
   'strapi::session',
   'strapi::favicon',
   'strapi::public',
+  // Custom security middleware
+  'global::security',
 ];

@@ -7,11 +7,8 @@ import {
   transformMediaUrls,
   validatePagination,
   createPaginationMeta,
-  checkRateLimit,
   ErrorResponses,
   SuccessResponses,
-  getEntityServiceOptions,
-  checkOwnership,
   USER_POPULATE,
 } from '../../../utils/api-helpers';
 
@@ -57,11 +54,11 @@ export default factories.createCoreController('api::chat.chat', ({ strapi }) => 
     }
 
     const user = ctx.state.user;
-    const { message, messageType, attachments, replyTo, mentions, tags } = ctx.request.body.data;
+    const { message, messageType, attachments, replyTo, mentions, tags } = ctx.request.body?.data || {};
 
     try {
       // Validate message
-      if (!message || message.trim().length === 0) {
+      if (!message || typeof message !== 'string' || message.trim().length === 0) {
         return ctx.badRequest('Message cannot be empty');
       }
 
@@ -69,9 +66,37 @@ export default factories.createCoreController('api::chat.chat', ({ strapi }) => 
         return ctx.badRequest('Message cannot exceed 2000 characters');
       }
 
+      // Validate messageType
+      const validMessageTypes = ['text', 'image', 'video', 'audio', 'file', 'match_invite', 'celebration'];
+      if (messageType && !validMessageTypes.includes(messageType)) {
+        return ctx.badRequest('Invalid message type');
+      }
+
+      // Validate attachments array
+      if (attachments && !Array.isArray(attachments)) {
+        return ctx.badRequest('Attachments must be an array');
+      }
+
+      // Validate mentions array
+      if (mentions && !Array.isArray(mentions)) {
+        return ctx.badRequest('Mentions must be an array');
+      }
+
+      // Validate tags array
+      if (tags && !Array.isArray(tags)) {
+        return ctx.badRequest('Tags must be an array');
+      }
+
       // Check rate limiting - max 50 messages per hour per user
-      const isRateLimited = await checkRateLimit(strapi, 'api::chat.chat', user.id, 50, 1);
-      if (isRateLimited) {
+      const timeAgo = new Date(Date.now() - 1 * 60 * 60 * 1000);
+      const recentMessages = await strapi.entityService.findMany('api::chat.chat', {
+        filters: {
+          sender: { id: user.id },
+          createdAt: { $gte: timeAgo },
+        },
+      });
+      
+      if (recentMessages.length >= 50) {
         return ctx.tooManyRequests(ErrorResponses.RATE_LIMIT(50, 'hour'));
       }
 
@@ -198,7 +223,19 @@ export default factories.createCoreController('api::chat.chat', ({ strapi }) => 
       }
 
       // Check ownership
-      const existingMessage = await checkOwnership(strapi, 'api::chat.chat', id, userId);
+      const existingMessage: any = await strapi.entityService.findOne('api::chat.chat', id, {
+        populate: {
+          sender: { fields: ['id'] },
+        },
+      });
+
+      if (!existingMessage) {
+        return ctx.notFound(ErrorResponses.NOT_FOUND('Message'));
+      }
+
+      if (existingMessage.sender.id !== userId) {
+        return ctx.forbidden(ErrorResponses.FORBIDDEN);
+      }
 
       // Check if message was sent within last 15 minutes (edit window)
       const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
@@ -253,7 +290,19 @@ export default factories.createCoreController('api::chat.chat', ({ strapi }) => 
 
     try {
       // Check ownership
-      await checkOwnership(strapi, 'api::chat.chat', id, userId);
+      const existingMessage: any = await strapi.entityService.findOne('api::chat.chat', id, {
+        populate: {
+          sender: { fields: ['id'] },
+        },
+      });
+
+      if (!existingMessage) {
+        return ctx.notFound(ErrorResponses.NOT_FOUND('Message'));
+      }
+
+      if (existingMessage.sender.id !== userId) {
+        return ctx.forbidden(ErrorResponses.FORBIDDEN);
+      }
 
       // Soft delete the message
       await strapi.entityService.update('api::chat.chat', id, {
@@ -291,6 +340,15 @@ export default factories.createCoreController('api::chat.chat', ({ strapi }) => 
     const userId = ctx.state.user.id;
 
     try {
+      // Validate emoji
+      if (!emoji || typeof emoji !== 'string' || emoji.trim().length === 0) {
+        return ctx.badRequest('Emoji is required');
+      }
+
+      // Basic emoji validation (1-4 characters for most emojis)
+      if (emoji.length > 10) {
+        return ctx.badRequest('Invalid emoji');
+      }
       const message: any = await strapi.entityService.findOne('api::chat.chat', id, {
         populate: {
           sender: USER_POPULATE,

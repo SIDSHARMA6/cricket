@@ -68,13 +68,31 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
       return ctx.unauthorized('Authentication required');
     }
 
-    const { caption, post } = ctx.request.body.data;
+    const { caption, post } = ctx.request.body?.data || {};
 
     try {
+      // Validate caption
+      if (caption && typeof caption !== 'string') {
+        return ctx.badRequest('Caption must be a string');
+      }
+
+      if (caption && caption.length > 2200) {
+        return ctx.badRequest('Caption cannot exceed 2200 characters');
+      }
+
+      // Validate post media array
+      if (post && !Array.isArray(post)) {
+        return ctx.badRequest('Post media must be an array');
+      }
+
+      if (post && post.length > 10) {
+        return ctx.badRequest('Cannot upload more than 10 media files');
+      }
+
       // Create the post
       const entity = await strapi.entityService.create('api::post.post', {
         data: {
-          caption,
+          caption: caption?.trim() || '',
           post,
           user: ctx.state.user.id,
           likeCount: 0,
