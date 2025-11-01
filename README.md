@@ -39,11 +39,14 @@ yarn build
 This project is configured for deployment on Render with PostgreSQL database.
 
 #### Prerequisites
+
 1. Create a Render account at [render.com](https://render.com)
 2. Generate production environment variables
 
 #### Environment Variables Setup
+
 Generate secure keys for production:
+
 ```bash
 # Generate random strings for these variables:
 APP_KEYS=key1,key2,key3,key4
@@ -55,6 +58,7 @@ ENCRYPTION_KEY=your-encryption-key
 ```
 
 #### Deployment Steps
+
 1. Push your code to GitHub
 2. Connect your GitHub repository to Render
 3. Create a PostgreSQL database service on Render
@@ -63,7 +67,9 @@ ENCRYPTION_KEY=your-encryption-key
 6. Deploy!
 
 #### Manual Deployment
+
 Alternatively, you can deploy manually:
+
 ```bash
 npm run build
 npm start

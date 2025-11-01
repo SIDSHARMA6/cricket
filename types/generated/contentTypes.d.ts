@@ -812,6 +812,8 @@ export interface ApiStoryStory extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    expiresAt: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    isExpired: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     liked_by: Schema.Attribute.Relation<
       'manyToMany',
       'plugin::users-permissions.user'

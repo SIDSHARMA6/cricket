@@ -24,6 +24,13 @@ const transformStoryData = (entity: any, currentUserId?: number) => {
   const mediaUrls = transformMediaUrls(entity.story);
   const likedBy = entity.liked_by || [];
 
+  // Calculate time remaining until expiration
+  const now = new Date();
+  const expiresAt = new Date(entity.expiresAt);
+  const timeRemaining = Math.max(0, expiresAt.getTime() - now.getTime());
+  const hoursRemaining = Math.floor(timeRemaining / (1000 * 60 * 60));
+  const minutesRemaining = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+
   return {
     id: entity.id,
     username: entity.user?.username || 'Unknown User',
@@ -31,6 +38,13 @@ const transformStoryData = (entity: any, currentUserId?: number) => {
     mediaUrls,
     likesCount: likedBy.length,
     isLiked: isLikedByUser(likedBy, currentUserId),
+    expiresAt: entity.expiresAt,
+    isExpired: entity.isExpired || now > expiresAt,
+    timeRemaining: {
+      hours: hoursRemaining,
+      minutes: minutesRemaining,
+      totalMs: timeRemaining
+    },
     createdAt: entity.createdAt,
     updatedAt: entity.updatedAt,
   };
@@ -56,11 +70,17 @@ export default factories.createCoreController('api::story.story', ({ strapi }) =
         return ctx.tooManyRequests(ErrorResponses.RATE_LIMIT(5, 'hour'));
       }
 
+      // Set expiration time to 24 hours from now
+      const expiresAt = new Date();
+      expiresAt.setHours(expiresAt.getHours() + 24);
+
       // Create the story entity
       const entity = await strapi.entityService.create('api::story.story', {
         data: {
           story,
           user: user.id,
+          expiresAt,
+          isExpired: false,
         },
         populate: {
           story: true,
@@ -82,13 +102,32 @@ export default factories.createCoreController('api::story.story', ({ strapi }) =
     }
   },
 
-  // Find All Stories with Pagination
+  // Find All Stories with Pagination (only non-expired)
   async find(ctx) {
     try {
       const { page, pageSize, start } = validatePagination(ctx.query.page, ctx.query.pageSize);
+      const { includeExpired = 'false' } = ctx.query;
+
+      // Filter to exclude expired stories unless explicitly requested
+      const filters: any = {};
+      if (includeExpired !== 'true') {
+        const now = new Date();
+        filters.$and = [
+          {
+            $or: [
+              { isExpired: { $ne: true } },
+              { isExpired: { $null: true } }
+            ]
+          },
+          {
+            expiresAt: { $gt: now }
+          }
+        ];
+      }
 
       const [entities, total] = await Promise.all([
         strapi.entityService.findMany('api::story.story', {
+          filters,
           ...getEntityServiceOptions({
             story: true,
             user: USER_POPULATE,
@@ -96,8 +135,9 @@ export default factories.createCoreController('api::story.story', ({ strapi }) =
           }),
           start,
           limit: pageSize,
+          sort: { createdAt: 'desc' },
         }),
-        strapi.entityService.count('api::story.story'),
+        strapi.entityService.count('api::story.story', { filters }),
       ]);
 
       const currentUserId = ctx.state.user?.id;
@@ -289,6 +329,96 @@ export default factories.createCoreController('api::story.story', ({ strapi }) =
         return ctx.forbidden(ErrorResponses.FORBIDDEN);
       }
       ctx.throw(500, ErrorResponses.SERVER_ERROR('delete story'));
+    }
+  },
+
+  // Get Active Stories (non-expired only)
+  async findActive(ctx) {
+    try {
+      const { page, pageSize, start } = validatePagination(ctx.query.page, ctx.query.pageSize);
+      const now = new Date();
+
+      const filters = {
+        $and: [
+          {
+            $or: [
+              { isExpired: { $ne: true } },
+              { isExpired: { $null: true } }
+            ]
+          },
+          {
+            expiresAt: { $gt: now }
+          }
+        ]
+      };
+
+      const [entities, total] = await Promise.all([
+        strapi.entityService.findMany('api::story.story', {
+          filters,
+          ...getEntityServiceOptions({
+            story: true,
+            user: USER_POPULATE,
+            liked_by: LIKED_BY_POPULATE,
+          }),
+          start,
+          limit: pageSize,
+          sort: { createdAt: 'desc' },
+        }),
+        strapi.entityService.count('api::story.story', { filters }),
+      ]);
+
+      const currentUserId = ctx.state.user?.id;
+      return {
+        data: entities.map((entity: any) => transformStoryData(entity, currentUserId)),
+        meta: {
+          ...createPaginationMeta(page, pageSize, total),
+          message: 'Active stories only (expires within 24 hours)'
+        }
+      };
+    } catch (error) {
+      ctx.throw(500, ErrorResponses.SERVER_ERROR('fetch active stories'));
+    }
+  },
+
+  // Clean up expired stories (admin only or cron job)
+  async cleanupExpired(ctx) {
+    try {
+      const now = new Date();
+      
+      // Find expired stories
+      const expiredStories = await strapi.entityService.findMany('api::story.story', {
+        filters: {
+          $or: [
+            { expiresAt: { $lt: now } },
+            { isExpired: true }
+          ]
+        },
+        fields: ['id'],
+      });
+
+      // Delete expired stories
+      const deletedIds = [];
+      for (const story of expiredStories) {
+        try {
+          await strapi.entityService.delete('api::story.story', story.id);
+          deletedIds.push(story.id);
+        } catch (error) {
+          console.error(`Failed to delete expired story ${story.id}:`, error);
+        }
+      }
+
+      console.log(`🧹 Cleaned up ${deletedIds.length} expired stories`);
+
+      return {
+        data: {
+          message: `${deletedIds.length} expired stories cleaned up`,
+          deletedIds,
+          cleanupTime: now.toISOString(),
+        },
+      };
+    } catch (error) {
+      console.error('❌ Cleanup error:', error);
+      ctx.throw(500, 'Failed to cleanup expired stories');
     }
   },
 

@@ -7,7 +7,8 @@ export default ({ env }) => ({
   url: env('PUBLIC_URL', 'http://localhost:1337'),
   proxy: env.bool('IS_PROXIED', false),
   cron: {
-    enabled: env.bool('CRON_ENABLED', false),
+    enabled: env.bool('CRON_ENABLED', true), // Enable cron by default for story expiration
+    tasks: require('./cron-tasks').default,
   },
   admin: {
     auth: {

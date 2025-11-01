@@ -31,6 +31,14 @@
       "type": "relation",
       "relation": "manyToMany",
       "target": "plugin::users-permissions.user"
+    },
+    "expiresAt": {
+      "type": "datetime",
+      "required": true
+    },
+    "isExpired": {
+      "type": "boolean",
+      "default": false
     }
   }
 }
