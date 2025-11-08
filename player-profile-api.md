@@ -371,3 +371,27 @@ Invoke-WebRequest -Uri "http://localhost:1337/api/player-profiles/search?query=M
 - Default `rating` is 0 if not specified
 - Profile images can be uploaded separately and linked via `profileImage` field
 - All stats fields default to 0 if not provided
+- Profile images are stored in Cloudinary and returned as full URLs
+- The API automatically handles both local uploads and Cloudinary URLs
+
+## Render Deployment Configuration
+
+The following environment variables must be set in Render dashboard:
+
+### Required Cloudinary Variables
+```
+CLOUDINARY_NAME=your_cloudinary_name
+CLOUDINARY_KEY=your_cloudinary_api_key
+CLOUDINARY_SECRET=your_cloudinary_api_secret
+```
+
+### Required Strapi Secrets
+```
+APP_KEYS=your_app_keys_comma_separated
+API_TOKEN_SALT=your_api_token_salt
+ADMIN_JWT_SECRET=your_admin_jwt_secret
+TRANSFER_TOKEN_SALT=your_transfer_token_salt
+JWT_SECRET=your_jwt_secret
+```
+
+These are configured in `render.yaml` with `sync: false` to be set manually in Render dashboard.

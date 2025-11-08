@@ -21,12 +21,19 @@ export const LIKED_BY_POPULATE = {
 export const transformMediaUrls = (mediaArray: any[]) => {
   if (!mediaArray || !Array.isArray(mediaArray)) return [];
   
-  return mediaArray.map((media: any) => ({
-    url: `${getBaseUrl()}${media.url}`,
-    name: media.name,
-    mime: media.mime,
-    size: media.size,
-  }));
+  return mediaArray.map((media: any) => {
+    // If URL already starts with http:// or https://, it's an absolute URL (e.g., from Cloudinary)
+    const url = media.url?.startsWith('http://') || media.url?.startsWith('https://') 
+      ? media.url 
+      : `${getBaseUrl()}${media.url}`;
+    
+    return {
+      url,
+      name: media.name,
+      mime: media.mime,
+      size: media.size,
+    };
+  });
 };
 
 // Check if user is liked by current user
