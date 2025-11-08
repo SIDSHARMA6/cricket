@@ -4,7 +4,7 @@
 
 // Get base URL from environment or use default
 export const getBaseUrl = () => {
-  return process.env.BASE_URL || 'https://cricket-d5rd.onrender.com';
+  return process.env.BASE_URL || process.env.PUBLIC_URL || 'http://localhost:1337';
 };
 
 // Common populate configuration for user fields

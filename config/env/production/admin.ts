@@ -10,9 +10,12 @@ export default ({ env }) => ({
       salt: env('TRANSFER_TOKEN_SALT'),
     },
   },
+  secrets: {
+    encryptionKey: env('ENCRYPTION_KEY'),
+  },
   flags: {
     nps: env.bool('FLAG_NPS', true),
     promoteEE: env.bool('FLAG_PROMOTE_EE', true),
   },
-  url: env('PUBLIC_ADMIN_URL', 'https://cricket-d5rd.onrender.com/admin'),
+  url: env('PUBLIC_ADMIN_URL'),
 });

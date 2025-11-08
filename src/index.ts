@@ -7,7 +7,21 @@ export default {
    *
    * This gives you an opportunity to extend code.
    */
-  register(/* { strapi }: { strapi: Core.Strapi } */) {},
+  register({ strapi }) {
+    // Add custom route to redirect root to admin panel
+    strapi.server.routes([
+      {
+        method: 'GET',
+        path: '/',
+        handler: (ctx) => {
+          ctx.redirect('/admin');
+        },
+        config: {
+          auth: false,
+        },
+      },
+    ]);
+  },
 
   /**
    * An asynchronous bootstrap function that runs before
