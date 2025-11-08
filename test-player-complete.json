@@ -1,0 +1,51 @@
+{
+  "data": {
+    "displayName": "Test Player Render",
+    "age": 28,
+    "birthday": "1996-03-20",
+    "role": "All-rounder",
+    "battingStyle": "Right-handed",
+    "bowlingStyle": "Right-arm medium",
+    "skillLevel": "Advanced",
+    "location": "Chennai, India",
+    "bio": "Experienced all-rounder with strong batting and bowling skills. Passionate about cricket and team leadership.",
+    "isAvailable": true,
+    "rating": 4.3,
+    "totalMatches": 75,
+    "phoneNumber": "+91-9988776655",
+    "emergencyContact": "+91-9988776656",
+    "favoriteTeam": "India",
+    "stats": {
+      "matchesPlayed": 75,
+      "runsScored": 2150,
+      "highestScore": 125,
+      "average": 38.5,
+      "strikeRate": 132.8,
+      "centuries": 2,
+      "halfCenturies": 12,
+      "wicketsTaken": 45,
+      "bowlingAverage": 24.8,
+      "economyRate": 6.2,
+      "bestBowling": "4/28",
+      "catches": 28,
+      "stumpings": 0,
+      "runOuts": 5
+    },
+    "achievements": [
+      {
+        "title": "Player of the Match",
+        "description": "Outstanding all-round performance",
+        "achievedDate": "2024-08-15",
+        "category": "team",
+        "points": 150
+      },
+      {
+        "title": "Century Maker",
+        "description": "Scored first century",
+        "achievedDate": "2024-05-10",
+        "category": "batting",
+        "points": 100
+      }
+    ]
+  }
+}

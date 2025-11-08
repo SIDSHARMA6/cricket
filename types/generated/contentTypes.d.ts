@@ -684,6 +684,7 @@ export interface ApiPlayerProfilePlayerProfile
       Schema.Attribute.Private;
     displayName: Schema.Attribute.String & Schema.Attribute.Required;
     emergencyContact: Schema.Attribute.String;
+    favoriteTeam: Schema.Attribute.String;
     isAvailable: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
