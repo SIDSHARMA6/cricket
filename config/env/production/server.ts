@@ -6,13 +6,9 @@ export default ({ env }) => ({
   app: {
     keys: env.array('APP_KEYS'),
   },
-  admin: {
-    auth: {
-      secret: env('ADMIN_JWT_SECRET'),
-    },
-  },
   cron: {
-    enabled: env.bool('CRON_ENABLED', false),
+    enabled: env.bool('CRON_ENABLED', true),
+    tasks: require('../cron-tasks').default,
   },
   webhooks: {
     populateRelations: env.bool('WEBHOOKS_POPULATE_RELATIONS', false),

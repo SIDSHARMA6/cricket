@@ -8,18 +8,38 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      - key: DATABASE_CLIENT
-        value: postgres
-      - key: DATABASE_SSL
-        value: true
-      - key: DATABASE_SSL_REJECT_UNAUTHORIZED
-        value: false
       - key: HOST
         value: 0.0.0.0
       - key: PORT
         value: 10000
       - key: PUBLIC_URL
         value: https://cricket-1-zawr.onrender.com
+      - key: DATABASE_CLIENT
+        value: postgres
+      - key: DATABASE_SSL
+        value: true
+      - key: DATABASE_SSL_REJECT_UNAUTHORIZED
+        value: false
+      - key: DATABASE_HOST
+        fromDatabase:
+          name: strapi-postgres
+          property: host
+      - key: DATABASE_PORT
+        fromDatabase:
+          name: strapi-postgres
+          property: port
+      - key: DATABASE_NAME
+        fromDatabase:
+          name: strapi-postgres
+          property: database
+      - key: DATABASE_USERNAME
+        fromDatabase:
+          name: strapi-postgres
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: strapi-postgres
+          property: password
     
   - type: pserv
     name: strapi-postgres

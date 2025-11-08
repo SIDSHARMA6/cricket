@@ -1,6 +1,4 @@
 export default ({ env }) => ({
-  url: '/',
-  path: '/admin',
   auth: {
     secret: env('ADMIN_JWT_SECRET'),
   },
