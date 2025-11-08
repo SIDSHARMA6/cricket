@@ -1,0 +1,16 @@
+# Elastic Beanstalk ignore file
+.git
+.gitignore
+node_modules
+.cache
+build
+.env
+.env.*
+*.log
+.DS_Store
+.vscode
+.idea
+*.sqlite
+*.sqlite3
+.tmp
+.strapi-updater.json
