@@ -1,4 +1,5 @@
 export default ({ env }) => ({
+  url: env('PUBLIC_URL', 'https://cricket-1-zawr.onrender.com'),
   auth: {
     secret: env('ADMIN_JWT_SECRET'),
   },
