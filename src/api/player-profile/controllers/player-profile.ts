@@ -38,6 +38,7 @@ const transformPlayerProfileData = (entity: any) => {
     totalMatches: entity.totalMatches,
     phoneNumber: entity.phoneNumber,
     emergencyContact: entity.emergencyContact,
+    favoriteTeam: entity.favoriteTeam,
     user: entity.user ? {
       id: entity.user.id,
       username: entity.user.username,
@@ -142,7 +143,7 @@ export default factories.createCoreController('api::player-profile.player-profil
     const { 
       displayName, age, birthday, role, battingStyle, bowlingStyle, 
       skillLevel, location, bio, profileImage, isAvailable, rating, 
-      totalMatches, phoneNumber, emergencyContact, user, stats, achievements 
+      totalMatches, phoneNumber, emergencyContact, favoriteTeam, user, stats, achievements 
     } = ctx.request.body?.data || {};
 
     try {
@@ -169,6 +170,7 @@ export default factories.createCoreController('api::player-profile.player-profil
           totalMatches: totalMatches || 0,
           phoneNumber,
           emergencyContact,
+          favoriteTeam,
           user: user || ctx.state.user.id,
           stats,
           achievements,
@@ -207,6 +209,8 @@ export default factories.createCoreController('api::player-profile.player-profil
     const updateData = ctx.request.body?.data || {};
 
     try {
+      console.log('Updating player profile:', id, 'with data:', JSON.stringify(updateData));
+      
       // Update the player profile
       const updatedEntity = await strapi.entityService.update('api::player-profile.player-profile', id, {
         data: updateData,
@@ -233,6 +237,13 @@ export default factories.createCoreController('api::player-profile.player-profil
         }
       };
     } catch (error: any) {
+      console.error('Player profile update error:', error);
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        details: error.details
+      });
+      
       if (error.message.includes('not found')) {
         return ctx.notFound(ErrorResponses.NOT_FOUND('Player profile'));
       }

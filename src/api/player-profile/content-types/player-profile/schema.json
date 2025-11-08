@@ -87,6 +87,9 @@
     },
     "emergencyContact": {
       "type": "string"
+    },
+    "favoriteTeam": {
+      "type": "string"
     }
   }
 }
