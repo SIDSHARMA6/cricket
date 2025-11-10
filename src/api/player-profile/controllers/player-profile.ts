@@ -142,7 +142,7 @@ export default factories.createCoreController('api::player-profile.player-profil
 
     const { 
       displayName, age, birthday, role, battingStyle, bowlingStyle, 
-      skillLevel, location, bio, profileImage, isAvailable, rating, 
+      skillLevel, location, bio, profileImage, profileImageUrl, isAvailable, rating, 
       totalMatches, phoneNumber, emergencyContact, favoriteTeam, user, stats, achievements 
     } = ctx.request.body?.data || {};
 
@@ -151,6 +151,51 @@ export default factories.createCoreController('api::player-profile.player-profil
       if (!displayName || !role) {
         return ctx.badRequest('Display name and role are required');
       }
+
+      // Handle profileImageUrl - accept either media ID or URL
+      let imageId = profileImage;
+      
+      if (!imageId && profileImageUrl) {
+        console.log('Processing profileImageUrl:', profileImageUrl);
+        
+        // If it's a number, use it directly as the media ID
+        if (typeof profileImageUrl === 'number' || !isNaN(Number(profileImageUrl))) {
+          imageId = Number(profileImageUrl);
+          console.log('Using profileImageUrl as media ID:', imageId);
+        } else {
+          // It's a URL string, try to find the media by URL
+          try {
+            // Extract the hash from the Cloudinary URL
+            const urlParts = profileImageUrl.split('/');
+            const filename = urlParts[urlParts.length - 1].split('.')[0];
+            
+            console.log('Searching for media with filename:', filename);
+            
+            const mediaFiles = await strapi.entityService.findMany('plugin::upload.file', {
+              filters: {
+                $or: [
+                  { hash: { $containsi: filename } },
+                  { url: { $containsi: filename } },
+                ]
+              },
+              limit: 1,
+            });
+            
+            console.log('Found media files:', mediaFiles?.length || 0);
+            
+            if (mediaFiles && mediaFiles.length > 0) {
+              imageId = mediaFiles[0].id;
+              console.log('Using media ID:', imageId);
+            } else {
+              console.log('No media found for URL:', profileImageUrl);
+            }
+          } catch (error) {
+            console.error('Error finding media by URL:', error);
+          }
+        }
+      }
+      
+      console.log('Final profileImage ID to save:', imageId);
 
       // Create the player profile
       const entity = await strapi.entityService.create('api::player-profile.player-profile', {
@@ -164,7 +209,7 @@ export default factories.createCoreController('api::player-profile.player-profil
           skillLevel: skillLevel || 'Beginner',
           location,
           bio,
-          profileImage,
+          profileImage: imageId,
           isAvailable: isAvailable !== undefined ? isAvailable : true,
           rating: rating || 0,
           totalMatches: totalMatches || 0,
@@ -210,6 +255,50 @@ export default factories.createCoreController('api::player-profile.player-profil
 
     try {
       console.log('Updating player profile:', id, 'with data:', JSON.stringify(updateData));
+      
+      // Handle profileImageUrl - accept either media ID or URL
+      if (!updateData.profileImage && updateData.profileImageUrl) {
+        console.log('Processing profileImageUrl:', updateData.profileImageUrl);
+        
+        // If it's a number, use it directly as the media ID
+        if (typeof updateData.profileImageUrl === 'number' || !isNaN(Number(updateData.profileImageUrl))) {
+          updateData.profileImage = Number(updateData.profileImageUrl);
+          console.log('Using profileImageUrl as media ID:', updateData.profileImage);
+          delete updateData.profileImageUrl;
+        } else {
+          // It's a URL string, try to find the media
+          try {
+            const urlParts = updateData.profileImageUrl.split('/');
+            const filename = urlParts[urlParts.length - 1].split('.')[0];
+            
+            console.log('Searching for media with filename:', filename);
+            
+            const mediaFiles = await strapi.entityService.findMany('plugin::upload.file', {
+              filters: {
+                $or: [
+                  { hash: { $containsi: filename } },
+                  { url: { $containsi: filename } },
+                ]
+              },
+              limit: 1,
+            });
+            
+            console.log('Found media files:', mediaFiles?.length || 0);
+            
+            if (mediaFiles && mediaFiles.length > 0) {
+              updateData.profileImage = mediaFiles[0].id;
+              delete updateData.profileImageUrl;
+              console.log('Using media ID:', updateData.profileImage);
+            } else {
+              console.log('No media found for URL:', updateData.profileImageUrl);
+            }
+          } catch (error) {
+            console.error('Error finding media by URL:', error);
+          }
+        }
+      }
+      
+      console.log('Final update data profileImage:', updateData.profileImage);
       
       // Update the player profile
       const updatedEntity = await strapi.entityService.update('api::player-profile.player-profile', id, {
