@@ -20,6 +20,9 @@ const transformPlayerProfileData = (entity: any) => {
     badgeUrl: achievement.badge ? transformMediaUrls([achievement.badge])[0] : null
   })) || [];
 
+  // Use profileImageUrl text field if available, otherwise use transformed media URL
+  const imageUrl = entity.profileImageUrl || profileImageUrls[0] || null;
+
   return {
     id: entity.id,
     documentId: entity.documentId,
@@ -32,7 +35,7 @@ const transformPlayerProfileData = (entity: any) => {
     skillLevel: entity.skillLevel,
     location: entity.location,
     bio: entity.bio,
-    profileImageUrl: profileImageUrls[0] || null,
+    profileImageUrl: imageUrl,
     isAvailable: entity.isAvailable,
     rating: entity.rating,
     totalMatches: entity.totalMatches,
@@ -196,6 +199,7 @@ export default factories.createCoreController('api::player-profile.player-profil
       }
       
       console.log('Final profileImage ID to save:', imageId);
+      console.log('ProfileImageUrl to save:', profileImageUrl);
 
       // Create the player profile
       const entity = await strapi.entityService.create('api::player-profile.player-profile', {
@@ -210,6 +214,7 @@ export default factories.createCoreController('api::player-profile.player-profil
           location,
           bio,
           profileImage: imageId,
+          profileImageUrl: profileImageUrl || null,
           isAvailable: isAvailable !== undefined ? isAvailable : true,
           rating: rating || 0,
           totalMatches: totalMatches || 0,
@@ -257,16 +262,15 @@ export default factories.createCoreController('api::player-profile.player-profil
       console.log('Updating player profile:', id, 'with data:', JSON.stringify(updateData));
       
       // Handle profileImageUrl - accept either media ID or URL
-      if (!updateData.profileImage && updateData.profileImageUrl) {
+      if (updateData.profileImageUrl) {
         console.log('Processing profileImageUrl:', updateData.profileImageUrl);
         
         // If it's a number, use it directly as the media ID
         if (typeof updateData.profileImageUrl === 'number' || !isNaN(Number(updateData.profileImageUrl))) {
           updateData.profileImage = Number(updateData.profileImageUrl);
           console.log('Using profileImageUrl as media ID:', updateData.profileImage);
-          delete updateData.profileImageUrl;
-        } else {
-          // It's a URL string, try to find the media
+        } else if (typeof updateData.profileImageUrl === 'string' && updateData.profileImageUrl.startsWith('http')) {
+          // It's a URL string, try to find the media and also keep the URL
           try {
             const urlParts = updateData.profileImageUrl.split('/');
             const filename = urlParts[urlParts.length - 1].split('.')[0];
@@ -287,18 +291,18 @@ export default factories.createCoreController('api::player-profile.player-profil
             
             if (mediaFiles && mediaFiles.length > 0) {
               updateData.profileImage = mediaFiles[0].id;
-              delete updateData.profileImageUrl;
               console.log('Using media ID:', updateData.profileImage);
             } else {
-              console.log('No media found for URL:', updateData.profileImageUrl);
+              console.log('No media found for URL, keeping URL string:', updateData.profileImageUrl);
             }
+            // Keep the profileImageUrl in the data
           } catch (error) {
             console.error('Error finding media by URL:', error);
           }
         }
       }
       
-      console.log('Final update data profileImage:', updateData.profileImage);
+      console.log('Final update data:', { profileImage: updateData.profileImage, profileImageUrl: updateData.profileImageUrl });
       
       // Update the player profile
       const updatedEntity = await strapi.entityService.update('api::player-profile.player-profile', id, {

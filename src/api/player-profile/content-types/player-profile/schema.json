@@ -58,6 +58,9 @@
       "multiple": false,
       "allowedTypes": ["images"]
     },
+    "profileImageUrl": {
+      "type": "text"
+    },
     "stats": {
       "type": "component",
       "component": "cricket.player-stats",

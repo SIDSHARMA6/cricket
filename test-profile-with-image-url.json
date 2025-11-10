@@ -1,0 +1,28 @@
+{
+  "data": {
+    "displayName": "Test User With Image",
+    "role": "Batsman",
+    "location": "Test City",
+    "bio": "Testing profile image URL",
+    "profileImageUrl": "https://res.cloudinary.com/dgfqim3jy/image/upload/v1762746696/large_scaled_1000087464_8b8d676b7d.jpg",
+    "isAvailable": true,
+    "phoneNumber": "1234567890",
+    "emergencyContact": "0987654321",
+    "favoriteTeam": "Test Team",
+    "stats": {
+      "matchesPlayed": 0,
+      "runsScored": 0,
+      "highestScore": 0,
+      "average": 0,
+      "strikeRate": 0,
+      "centuries": 0,
+      "halfCenturies": 0,
+      "wicketsTaken": 0,
+      "bowlingAverage": 0,
+      "economyRate": 0,
+      "catches": 0,
+      "stumpings": 0,
+      "runOuts": 0
+    }
+  }
+}

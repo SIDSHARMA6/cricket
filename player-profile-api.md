@@ -1,8 +1,15 @@
-# Player Profile API Documentation
+# Player Profile API - Complete CRUD Documentation
 
-## Base URL
+## Base URLs
 ```
-http://localhost:1337/api/player-profiles
+Local:  http://localhost:1337/api/player-profiles
+Render: https://cricket-1-zawr.onrender.com/api/player-profiles
+```
+
+## Authentication
+Most endpoints require authentication. Include JWT token in headers:
+```
+Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
 ## Complete Request Body Structure
@@ -104,18 +111,169 @@ http://localhost:1337/api/player-profiles
 | `category` | string | Category (batting, bowling, fielding, team, milestone, tournament) |
 | `points` | number | Points awarded |
 
-## API Endpoints
+---
 
-### 1. Get All Player Profiles
+## CRUD Operations
+
+### 1. CREATE - Create Player Profile
+
+**Endpoint:** `POST /api/player-profiles`
+
+**Authentication:** Required
+
+**Headers:**
 ```
-GET /api/player-profiles
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN
 ```
+
+**Request Body:**
+```json
+{
+  "data": {
+    "displayName": "Kiro Test User",
+    "age": 25,
+    "birthday": "1999-05-15",
+    "role": "Batsman",
+    "battingStyle": "Right-handed",
+    "bowlingStyle": "Right-arm medium",
+    "skillLevel": "Intermediate",
+    "location": "Mumbai, India",
+    "bio": "Passionate cricket player",
+    "profileImageUrl": "https://kiro.dev/icon.svg?fe599162bb293ea0",
+    "isAvailable": true,
+    "rating": 4.5,
+    "totalMatches": 45,
+    "phoneNumber": "+91-9876543210",
+    "emergencyContact": "+91-9876543211",
+    "favoriteTeam": "India",
+    "stats": {
+      "matchesPlayed": 45,
+      "runsScored": 1250,
+      "highestScore": 89,
+      "average": 32.5,
+      "strikeRate": 125.5,
+      "centuries": 0,
+      "halfCenturies": 8,
+      "wicketsTaken": 12,
+      "bowlingAverage": 28.5,
+      "economyRate": 6.5,
+      "bestBowling": "3/25",
+      "catches": 15,
+      "stumpings": 0,
+      "runOuts": 3
+    },
+    "achievements": [
+      {
+        "title": "Best Batsman Award",
+        "description": "Best batsman of the season",
+        "achievedDate": "2024-03-15",
+        "category": "batting",
+        "points": 100
+      }
+    ]
+  }
+}
+```
+
+**Success Response (201):**
+```json
+{
+  "data": {
+    "id": 12,
+    "documentId": "abc123xyz",
+    "displayName": "Kiro Test User",
+    "age": 25,
+    "birthday": "1999-05-15",
+    "role": "Batsman",
+    "battingStyle": "Right-handed",
+    "bowlingStyle": "Right-arm medium",
+    "skillLevel": "Intermediate",
+    "location": "Mumbai, India",
+    "bio": "Passionate cricket player",
+    "profileImageUrl": "https://kiro.dev/icon.svg?fe599162bb293ea0",
+    "isAvailable": true,
+    "rating": 4.5,
+    "totalMatches": 45,
+    "phoneNumber": "+91-9876543210",
+    "emergencyContact": "+91-9876543211",
+    "favoriteTeam": "India",
+    "user": {
+      "id": 8,
+      "username": "kirotest",
+      "email": "kirotest@test.com"
+    },
+    "stats": {
+      "matchesPlayed": 45,
+      "runsScored": 1250,
+      "highestScore": 89,
+      "average": 32.5,
+      "strikeRate": 125.5,
+      "centuries": 0,
+      "halfCenturies": 8,
+      "wicketsTaken": 12,
+      "bowlingAverage": 28.5,
+      "economyRate": 6.5,
+      "bestBowling": "3/25",
+      "catches": 15,
+      "stumpings": 0,
+      "runOuts": 3
+    },
+    "achievements": [
+      {
+        "id": 1,
+        "title": "Best Batsman Award",
+        "description": "Best batsman of the season",
+        "achievedDate": "2024-03-15",
+        "category": "batting",
+        "points": 100,
+        "badge": null,
+        "badgeUrl": null
+      }
+    ],
+    "createdAt": "2025-11-10T10:22:15.123Z",
+    "updatedAt": "2025-11-10T10:22:15.123Z",
+    "publishedAt": null
+  },
+  "meta": {
+    "message": "Player profile created successfully"
+  }
+}
+```
+
+**cURL Example:**
+```bash
+curl -X POST http://localhost:1337/api/player-profiles \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d @profile-create.json
+```
+
+**PowerShell Example:**
+```powershell
+$token = "YOUR_JWT_TOKEN"
+$body = Get-Content profile-create.json -Raw
+$headers = @{
+    "Authorization" = "Bearer $token"
+    "Content-Type" = "application/json"
+}
+Invoke-WebRequest -Uri "http://localhost:1337/api/player-profiles" `
+  -Method POST -Body $body -Headers $headers
+```
+
+---
+
+### 2. READ - Get All Player Profiles
+
+**Endpoint:** `GET /api/player-profiles`
+
+**Authentication:** Not Required (Public)
 
 **Query Parameters:**
 - `page` - Page number (default: 1)
 - `pageSize` - Items per page (default: 10, max: 50)
 
-**Response:**
+**Success Response (200):**
 ```json
 {
   "data": [...],
@@ -130,12 +288,25 @@ GET /api/player-profiles
 }
 ```
 
-### 2. Get Single Player Profile
-```
-GET /api/player-profiles/:id
+**cURL Example:**
+```bash
+curl -X GET "http://localhost:1337/api/player-profiles?page=1&pageSize=10"
 ```
 
-**Response:**
+**PowerShell Example:**
+```powershell
+Invoke-WebRequest -Uri "http://localhost:1337/api/player-profiles?page=1&pageSize=10" -Method GET
+```
+
+---
+
+### 3. READ - Get Single Player Profile
+
+**Endpoint:** `GET /api/player-profiles/:id`
+
+**Authentication:** Not Required (Public)
+
+**Success Response (200):**
 ```json
 {
   "data": {
@@ -173,53 +344,98 @@ GET /api/player-profiles/:id
 }
 ```
 
-### 3. Create Player Profile
+**cURL Example:**
+```bash
+curl -X GET http://localhost:1337/api/player-profiles/12
 ```
-POST /api/player-profiles
+
+**PowerShell Example:**
+```powershell
+Invoke-WebRequest -Uri "http://localhost:1337/api/player-profiles/12" -Method GET
 ```
+
+---
+
+### 4. UPDATE - Update Player Profile
+
+**Endpoint:** `PUT /api/player-profiles/:id`
+
+**Authentication:** Required
 
 **Headers:**
 ```
 Content-Type: application/json
-Authorization: Bearer <JWT_TOKEN>
+Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
-**Body:** See "Complete Request Body Structure" above
-
-**Response:**
+**Request Body (All fields optional):**
 ```json
 {
-  "data": {...},
-  "meta": {
-    "message": "Player profile created successfully"
+  "data": {
+    "displayName": "Updated Name",
+    "profileImageUrl": "https://new-image-url.com/image.jpg",
+    "bio": "Updated bio",
+    "rating": 4.8,
+    "stats": {
+      "matchesPlayed": 50,
+      "runsScored": 1500
+    }
   }
 }
 ```
 
-### 4. Update Player Profile
+**Success Response (200):**
+```json
+{
+  "data": {
+    "id": 12,
+    "documentId": "abc123xyz",
+    "displayName": "Updated Name",
+    "profileImageUrl": "https://new-image-url.com/image.jpg",
+    "bio": "Updated bio",
+    "rating": 4.8,
+    ...
+  },
+  "meta": {
+    "message": "Player profile updated successfully"
+  }
+}
 ```
-PUT /api/player-profiles/:id
+
+**cURL Example:**
+```bash
+curl -X PUT http://localhost:1337/api/player-profiles/12 \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{"data": {"displayName": "Updated Name"}}'
 ```
+
+**PowerShell Example:**
+```powershell
+$token = "YOUR_JWT_TOKEN"
+$body = '{"data": {"displayName": "Updated Name", "profileImageUrl": "https://new-url.com/image.jpg"}}'
+$headers = @{
+    "Authorization" = "Bearer $token"
+    "Content-Type" = "application/json"
+}
+Invoke-WebRequest -Uri "http://localhost:1337/api/player-profiles/12" `
+  -Method PUT -Body $body -Headers $headers
+```
+
+---
+
+### 5. DELETE - Delete Player Profile
+
+**Endpoint:** `DELETE /api/player-profiles/:id`
+
+**Authentication:** Required
 
 **Headers:**
 ```
-Content-Type: application/json
-Authorization: Bearer <JWT_TOKEN>
+Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
-**Body:** Same as create, but all fields are optional
-
-### 5. Delete Player Profile
-```
-DELETE /api/player-profiles/:id
-```
-
-**Headers:**
-```
-Authorization: Bearer <JWT_TOKEN>
-```
-
-**Response:**
+**Success Response (200):**
 ```json
 {
   "data": {
@@ -229,17 +445,25 @@ Authorization: Bearer <JWT_TOKEN>
 }
 ```
 
-### 6. Get Player Profile by User ID
-```
-GET /api/player-profiles/user/:userId
+**cURL Example:**
+```bash
+curl -X DELETE http://localhost:1337/api/player-profiles/12 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
-**Response:** Same as single profile
+**PowerShell Example:**
+```powershell
+$token = "YOUR_JWT_TOKEN"
+$headers = @{"Authorization" = "Bearer $token"}
+Invoke-WebRequest -Uri "http://localhost:1337/api/player-profiles/12" `
+  -Method DELETE -Headers $headers
+```
 
-### 7. Search Player Profiles
-```
-GET /api/player-profiles/search
-```
+---
+
+## Additional Endpoints
+
+### 6. Get Player Pr
 
 **Query Parameters:**
 - `query` - Search text (searches in displayName, bio, location)
