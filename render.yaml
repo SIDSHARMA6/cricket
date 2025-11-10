@@ -59,7 +59,6 @@ services:
     
   - type: pserv
     name: strapi-postgres
-    env: postgres
     plan: starter
     databaseName: strapi
     databaseUser: strapi
