@@ -463,7 +463,26 @@ Invoke-WebRequest -Uri "http://localhost:1337/api/player-profiles/12" `
 
 ## Additional Endpoints
 
-### 6. Get Player Pr
+### 6. Get Player Profile by User ID
+
+**Endpoint:** `GET /api/player-profiles/user/:userId`
+
+**Authentication:** Not Required (Public)
+
+**Success Response (200):** Same as single profile
+
+**cURL Example:**
+```bash
+curl -X GET http://localhost:1337/api/player-profiles/user/8
+```
+
+---
+
+### 7. Search Player Profiles
+
+**Endpoint:** `GET /api/player-profiles/search`
+
+**Authentication:** Not Required (Public)
 
 **Query Parameters:**
 - `query` - Search text (searches in displayName, bio, location)
@@ -471,13 +490,7 @@ Invoke-WebRequest -Uri "http://localhost:1337/api/player-profiles/12" `
 - `skillLevel` - Filter by skill level
 - `location` - Filter by location (partial match)
 
-**Example:**
-```
-GET /api/player-profiles/search?role=Batsman&skillLevel=Professional
-GET /api/player-profiles/search?query=Mumbai
-```
-
-**Response:**
+**Success Response (200):**
 ```json
 {
   "data": [...],

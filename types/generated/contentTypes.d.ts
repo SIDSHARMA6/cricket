@@ -694,7 +694,7 @@ export interface ApiPlayerProfilePlayerProfile
       Schema.Attribute.Private;
     location: Schema.Attribute.String;
     phoneNumber: Schema.Attribute.String;
-    profileImage: Schema.Attribute.Media<'images'>;
+    profile_image: Schema.Attribute.Text;
     profileImageUrl: Schema.Attribute.Text;
     publishedAt: Schema.Attribute.DateTime;
     rating: Schema.Attribute.Decimal &
