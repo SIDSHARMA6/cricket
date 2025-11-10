@@ -14,14 +14,10 @@ import {
 
 // Helper function to transform player profile data
 const transformPlayerProfileData = (entity: any) => {
-  const profileImageUrls = transformMediaUrls(entity.profileImage ? [entity.profileImage] : []);
   const achievementBadges = entity.achievements?.map((achievement: any) => ({
     ...achievement,
     badgeUrl: achievement.badge ? transformMediaUrls([achievement.badge])[0] : null
   })) || [];
-
-  // Use profileImageUrl text field if available, otherwise use transformed media URL
-  const imageUrl = entity.profileImageUrl || profileImageUrls[0] || null;
 
   return {
     id: entity.id,
@@ -35,7 +31,7 @@ const transformPlayerProfileData = (entity: any) => {
     skillLevel: entity.skillLevel,
     location: entity.location,
     bio: entity.bio,
-    profileImageUrl: imageUrl,
+    profileImageUrl: entity.profileImageUrl || null,
     isAvailable: entity.isAvailable,
     rating: entity.rating,
     totalMatches: entity.totalMatches,
@@ -80,7 +76,6 @@ export default factories.createCoreController('api::player-profile.player-profil
         strapi.entityService.findMany('api::player-profile.player-profile', {
           populate: {
             user: USER_POPULATE,
-            profileImage: true,
             stats: true,
             achievements: {
               populate: {
@@ -112,7 +107,6 @@ export default factories.createCoreController('api::player-profile.player-profil
       const entity = await strapi.entityService.findOne('api::player-profile.player-profile', id, {
         populate: {
           user: USER_POPULATE,
-          profileImage: true,
           stats: true,
           achievements: {
             populate: {
@@ -145,7 +139,7 @@ export default factories.createCoreController('api::player-profile.player-profil
 
     const { 
       displayName, age, birthday, role, battingStyle, bowlingStyle, 
-      skillLevel, location, bio, profileImage, profileImageUrl, isAvailable, rating, 
+      skillLevel, location, bio, profileImageUrl, isAvailable, rating, 
       totalMatches, phoneNumber, emergencyContact, favoriteTeam, user, stats, achievements 
     } = ctx.request.body?.data || {};
 
@@ -155,51 +149,7 @@ export default factories.createCoreController('api::player-profile.player-profil
         return ctx.badRequest('Display name and role are required');
       }
 
-      // Handle profileImageUrl - accept either media ID or URL
-      let imageId = profileImage;
-      
-      if (!imageId && profileImageUrl) {
-        console.log('Processing profileImageUrl:', profileImageUrl);
-        
-        // If it's a number, use it directly as the media ID
-        if (typeof profileImageUrl === 'number' || !isNaN(Number(profileImageUrl))) {
-          imageId = Number(profileImageUrl);
-          console.log('Using profileImageUrl as media ID:', imageId);
-        } else {
-          // It's a URL string, try to find the media by URL
-          try {
-            // Extract the hash from the Cloudinary URL
-            const urlParts = profileImageUrl.split('/');
-            const filename = urlParts[urlParts.length - 1].split('.')[0];
-            
-            console.log('Searching for media with filename:', filename);
-            
-            const mediaFiles = await strapi.entityService.findMany('plugin::upload.file', {
-              filters: {
-                $or: [
-                  { hash: { $containsi: filename } },
-                  { url: { $containsi: filename } },
-                ]
-              },
-              limit: 1,
-            });
-            
-            console.log('Found media files:', mediaFiles?.length || 0);
-            
-            if (mediaFiles && mediaFiles.length > 0) {
-              imageId = mediaFiles[0].id;
-              console.log('Using media ID:', imageId);
-            } else {
-              console.log('No media found for URL:', profileImageUrl);
-            }
-          } catch (error) {
-            console.error('Error finding media by URL:', error);
-          }
-        }
-      }
-      
-      console.log('Final profileImage ID to save:', imageId);
-      console.log('ProfileImageUrl to save:', profileImageUrl);
+      console.log('Creating profile with profileImageUrl:', profileImageUrl);
 
       // Create the player profile
       const entity = await strapi.entityService.create('api::player-profile.player-profile', {
@@ -213,7 +163,6 @@ export default factories.createCoreController('api::player-profile.player-profil
           skillLevel: skillLevel || 'Beginner',
           location,
           bio,
-          profileImage: imageId,
           profileImageUrl: profileImageUrl || null,
           isAvailable: isAvailable !== undefined ? isAvailable : true,
           rating: rating || 0,
@@ -227,7 +176,6 @@ export default factories.createCoreController('api::player-profile.player-profil
         },
         populate: {
           user: USER_POPULATE,
-          profileImage: true,
           stats: true,
           achievements: {
             populate: {
@@ -260,56 +208,12 @@ export default factories.createCoreController('api::player-profile.player-profil
 
     try {
       console.log('Updating player profile:', id, 'with data:', JSON.stringify(updateData));
-      
-      // Handle profileImageUrl - accept either media ID or URL
-      if (updateData.profileImageUrl) {
-        console.log('Processing profileImageUrl:', updateData.profileImageUrl);
-        
-        // If it's a number, use it directly as the media ID
-        if (typeof updateData.profileImageUrl === 'number' || !isNaN(Number(updateData.profileImageUrl))) {
-          updateData.profileImage = Number(updateData.profileImageUrl);
-          console.log('Using profileImageUrl as media ID:', updateData.profileImage);
-        } else if (typeof updateData.profileImageUrl === 'string' && updateData.profileImageUrl.startsWith('http')) {
-          // It's a URL string, try to find the media and also keep the URL
-          try {
-            const urlParts = updateData.profileImageUrl.split('/');
-            const filename = urlParts[urlParts.length - 1].split('.')[0];
-            
-            console.log('Searching for media with filename:', filename);
-            
-            const mediaFiles = await strapi.entityService.findMany('plugin::upload.file', {
-              filters: {
-                $or: [
-                  { hash: { $containsi: filename } },
-                  { url: { $containsi: filename } },
-                ]
-              },
-              limit: 1,
-            });
-            
-            console.log('Found media files:', mediaFiles?.length || 0);
-            
-            if (mediaFiles && mediaFiles.length > 0) {
-              updateData.profileImage = mediaFiles[0].id;
-              console.log('Using media ID:', updateData.profileImage);
-            } else {
-              console.log('No media found for URL, keeping URL string:', updateData.profileImageUrl);
-            }
-            // Keep the profileImageUrl in the data
-          } catch (error) {
-            console.error('Error finding media by URL:', error);
-          }
-        }
-      }
-      
-      console.log('Final update data:', { profileImage: updateData.profileImage, profileImageUrl: updateData.profileImageUrl });
-      
+
       // Update the player profile
       const updatedEntity = await strapi.entityService.update('api::player-profile.player-profile', id, {
         data: updateData,
         populate: {
           user: USER_POPULATE,
-          profileImage: true,
           stats: true,
           achievements: {
             populate: {
@@ -331,11 +235,6 @@ export default factories.createCoreController('api::player-profile.player-profil
       };
     } catch (error: any) {
       console.error('Player profile update error:', error);
-      console.error('Error details:', {
-        message: error.message,
-        stack: error.stack,
-        details: error.details
-      });
       
       if (error.message.includes('not found')) {
         return ctx.notFound(ErrorResponses.NOT_FOUND('Player profile'));
@@ -384,7 +283,6 @@ export default factories.createCoreController('api::player-profile.player-profil
         },
         populate: {
           user: USER_POPULATE,
-          profileImage: true,
           stats: true,
           achievements: {
             populate: {
@@ -440,7 +338,6 @@ export default factories.createCoreController('api::player-profile.player-profil
         filters,
         populate: {
           user: USER_POPULATE,
-          profileImage: true,
           stats: true,
           achievements: {
             populate: {
