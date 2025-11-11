@@ -1,0 +1,14 @@
+{
+  "data": {
+    "displayName": "CRUD Test User",
+    "role": "Batsman",
+    "age": 28,
+    "birthday": "1996-05-15",
+    "profileImageUrl": "https://res.cloudinary.com/demo/image/upload/sample.jpg",
+    "skillLevel": "Intermediate",
+    "location": "Test City",
+    "bio": "Testing CRUD operations for profile image",
+    "battingStyle": "Right-handed",
+    "phoneNumber": "1234567890"
+  }
+}
