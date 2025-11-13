@@ -27,11 +27,11 @@ export default factories.createCoreController('api::story.story', ({ strapi }) =
     const now = new Date();
     
     // Add filter for non-expired stories
-    ctx.query.filters = {
-      ...ctx.query.filters,
+    const existingFilters = ctx.query.filters || {};
+    ctx.query.filters = Object.assign({}, existingFilters, {
       isExpired: false,
       expiresAt: { $gt: now.toISOString() }
-    };
+    });
 
     return super.find(ctx);
   },
@@ -43,7 +43,7 @@ export default factories.createCoreController('api::story.story', ({ strapi }) =
     }
 
     const { id } = ctx.params;
-    const story = await strapi.entityService.findOne('api::story.story', id, {
+    const story: any = await strapi.entityService.findOne('api::story.story', id, {
       populate: { user: { fields: ['id'] } }
     });
 
@@ -51,7 +51,7 @@ export default factories.createCoreController('api::story.story', ({ strapi }) =
       return ctx.notFound('Story not found');
     }
 
-    if (story.user.id !== ctx.state.user.id) {
+    if (story.user?.id !== ctx.state.user.id) {
       return ctx.forbidden('You can only update your own stories');
     }
 
@@ -65,7 +65,7 @@ export default factories.createCoreController('api::story.story', ({ strapi }) =
     }
 
     const { id } = ctx.params;
-    const story = await strapi.entityService.findOne('api::story.story', id, {
+    const story: any = await strapi.entityService.findOne('api::story.story', id, {
       populate: { user: { fields: ['id'] } }
     });
 
@@ -73,7 +73,7 @@ export default factories.createCoreController('api::story.story', ({ strapi }) =
       return ctx.notFound('Story not found');
     }
 
-    if (story.user.id !== ctx.state.user.id) {
+    if (story.user?.id !== ctx.state.user.id) {
       return ctx.forbidden('You can only delete your own stories');
     }
 
