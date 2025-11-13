@@ -29,9 +29,8 @@ const transformPlayerProfileData = (entity: any) => {
     battingStyle: entity.battingStyle,
     bowlingStyle: entity.bowlingStyle,
     skillLevel: entity.skillLevel,
-    location: entity.location,
     bio: entity.bio,
-    profileImageUrl: entity.profileImageUrl || null,
+    profile_image: entity.profile_image || null,
     isAvailable: entity.isAvailable,
     rating: entity.rating,
     totalMatches: entity.totalMatches,
@@ -104,7 +103,9 @@ export default factories.createCoreController('api::player-profile.player-profil
     const { id } = ctx.params;
 
     try {
-      const entity = await strapi.entityService.findOne('api::player-profile.player-profile', id, {
+      // Use document service for documentId support
+      const entity = await strapi.documents('api::player-profile.player-profile').findOne({
+        documentId: id,
         populate: {
           user: USER_POPULATE,
           stats: true,
@@ -127,6 +128,7 @@ export default factories.createCoreController('api::player-profile.player-profil
         }
       };
     } catch (error) {
+      console.error('Find one error:', error);
       ctx.throw(500, ErrorResponses.SERVER_ERROR('fetch player profile'));
     }
   },
@@ -139,7 +141,7 @@ export default factories.createCoreController('api::player-profile.player-profil
 
     const { 
       displayName, age, birthday, role, battingStyle, bowlingStyle, 
-      skillLevel, location, bio, profileImageUrl, isAvailable, rating, 
+      skillLevel, bio, profile_image, isAvailable, rating, 
       totalMatches, phoneNumber, emergencyContact, favoriteTeam, user, stats, achievements 
     } = ctx.request.body?.data || {};
 
@@ -149,7 +151,7 @@ export default factories.createCoreController('api::player-profile.player-profil
         return ctx.badRequest('Display name and role are required');
       }
 
-      console.log('Creating profile with profileImageUrl:', profileImageUrl);
+      console.log('Creating profile with profile_image:', profile_image);
 
       // Create the player profile
       const entity = await strapi.entityService.create('api::player-profile.player-profile', {
@@ -161,9 +163,8 @@ export default factories.createCoreController('api::player-profile.player-profil
           battingStyle,
           bowlingStyle,
           skillLevel: skillLevel || 'Beginner',
-          location,
           bio,
-          profileImageUrl: profileImageUrl || null,
+          profile_image: profile_image || null,
           isAvailable: isAvailable !== undefined ? isAvailable : true,
           rating: rating || 0,
           totalMatches: totalMatches || 0,
@@ -209,8 +210,9 @@ export default factories.createCoreController('api::player-profile.player-profil
     try {
       console.log('Updating player profile:', id, 'with data:', JSON.stringify(updateData));
 
-      // Update the player profile
-      const updatedEntity = await strapi.entityService.update('api::player-profile.player-profile', id, {
+      // Use document service for documentId support
+      const updatedEntity = await strapi.documents('api::player-profile.player-profile').update({
+        documentId: id,
         data: updateData,
         populate: {
           user: USER_POPULATE,
@@ -252,7 +254,10 @@ export default factories.createCoreController('api::player-profile.player-profil
     const { id } = ctx.params;
 
     try {
-      const deletedEntity = await strapi.entityService.delete('api::player-profile.player-profile', id);
+      // Use document service for documentId support
+      const deletedEntity = await strapi.documents('api::player-profile.player-profile').delete({
+        documentId: id,
+      });
 
       if (!deletedEntity) {
         return ctx.notFound(ErrorResponses.NOT_FOUND('Player profile'));
@@ -265,6 +270,7 @@ export default factories.createCoreController('api::player-profile.player-profil
         },
       };
     } catch (error: any) {
+      console.error('Delete error:', error);
       if (error.message.includes('not found')) {
         return ctx.notFound(ErrorResponses.NOT_FOUND('Player profile'));
       }
@@ -318,7 +324,6 @@ export default factories.createCoreController('api::player-profile.player-profil
         filters.$or = [
           { displayName: { $containsi: query } },
           { bio: { $containsi: query } },
-          { location: { $containsi: query } },
         ];
       }
 
@@ -328,10 +333,6 @@ export default factories.createCoreController('api::player-profile.player-profil
 
       if (skillLevel) {
         filters.skillLevel = { $eq: skillLevel };
-      }
-
-      if (location) {
-        filters.location = { $containsi: location };
       }
 
       const entities = await strapi.entityService.findMany('api::player-profile.player-profile', {
