@@ -70,13 +70,7 @@
         "Professional"
       ]
     },
-    "location": {
-      "type": "string"
-    },
     "bio": {
-      "type": "text"
-    },
-    "profileImageUrl": {
       "type": "text"
     },
     "stats": {

@@ -15,10 +15,12 @@ export default factories.createCoreController('api::group.group', ({ strapi }) =
     const userId = ctx.state.user.id;
 
     try {
-      const group: any = await strapi.entityService.findOne('api::group.group', id, {
+      // Find group by documentId using db query
+      const group: any = await strapi.db.query('api::group.group').findOne({
+        where: { documentId: id },
         populate: {
-          members: { fields: ['id'] },
-          user: { fields: ['id', 'username'] }
+          members: true,
+          user: true
         }
       });
 
@@ -33,7 +35,7 @@ export default factories.createCoreController('api::group.group', ({ strapi }) =
         return ctx.badRequest('You are already a member of this group');
       }
 
-      const updatedGroup = await strapi.entityService.update('api::group.group', id, {
+      const updatedGroup = await strapi.entityService.update('api::group.group', group.id, {
         data: {
           members: [...members.map((m: any) => m.id), userId] as any,
           members_count: members.length + 1
@@ -64,10 +66,12 @@ export default factories.createCoreController('api::group.group', ({ strapi }) =
     const userId = ctx.state.user.id;
 
     try {
-      const group: any = await strapi.entityService.findOne('api::group.group', id, {
+      // Find group by documentId using db query
+      const group: any = await strapi.db.query('api::group.group').findOne({
+        where: { documentId: id },
         populate: {
-          members: { fields: ['id'] },
-          user: { fields: ['id'] }
+          members: true,
+          user: true
         }
       });
 
@@ -87,7 +91,7 @@ export default factories.createCoreController('api::group.group', ({ strapi }) =
         return ctx.badRequest('You are not a member of this group');
       }
 
-      const updatedGroup = await strapi.entityService.update('api::group.group', id, {
+      const updatedGroup = await strapi.entityService.update('api::group.group', group.id, {
         data: {
           members: members.filter((m: any) => m.id !== userId).map((m: any) => m.id) as any,
           members_count: Math.max(0, members.length - 1)

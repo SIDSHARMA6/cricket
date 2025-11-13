@@ -780,7 +780,14 @@ export interface ApiMatchMatch extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     date_time: Schema.Attribute.DateTime & Schema.Attribute.Required;
     description: Schema.Attribute.Text;
-    entry_fee: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<0>;
+    entry_fee: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
     format: Schema.Attribute.Enumeration<
       ['T20', 'ODI', 'Test', 'Box Cricket', 'Tape Ball']
     > &
@@ -795,7 +802,6 @@ export interface ApiMatchMatch extends Struct.CollectionTypeSchema {
       ['friendly', 'practice', 'tournament', 'league']
     > &
       Schema.Attribute.DefaultTo<'friendly'>;
-    money: Schema.Attribute.String;
     overs: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<20>;
     players: Schema.Attribute.Relation<
       'manyToMany',
@@ -936,10 +942,8 @@ export interface ApiPlayerProfilePlayerProfile
       'api::player-profile.player-profile'
     > &
       Schema.Attribute.Private;
-    location: Schema.Attribute.String;
     phoneNumber: Schema.Attribute.String;
     profile_image: Schema.Attribute.Text;
-    profileImageUrl: Schema.Attribute.Text;
     publishedAt: Schema.Attribute.DateTime;
     rating: Schema.Attribute.Decimal &
       Schema.Attribute.SetMinMax<

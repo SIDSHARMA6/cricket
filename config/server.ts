@@ -6,6 +6,8 @@ export default ({ env }) => ({
   },
   url: env('PUBLIC_URL', 'http://localhost:1337'),
   proxy: true,
+  timeout: env.int('REQUEST_TIMEOUT', 30000), // 30 seconds
+  keepAliveTimeout: env.int('KEEP_ALIVE_TIMEOUT', 65000), // 65 seconds
   cron: {
     enabled: env.bool('CRON_ENABLED', true), // Enable cron by default for story expiration
     tasks: require('./cron-tasks').default,

@@ -42,7 +42,7 @@ $locationBody = @{
 } | ConvertTo-Json
 
 try {
-    $response = Invoke-RestMethod -Uri "$baseUrl/users/me/location" -Method Put -Body $locationBody -Headers $headers
+    $response = Invoke-RestMethod -Uri "$baseUrl/player-profiles/me/location" -Method Put -Body $locationBody -Headers $headers
     Write-Host " ✓" -ForegroundColor Green
     Write-Host "  Location: $($response.data.city), $($response.data.state)" -ForegroundColor Gray
 } catch {

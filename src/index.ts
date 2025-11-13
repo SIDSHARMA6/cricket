@@ -1,4 +1,5 @@
 // import type { Core } from '@strapi/strapi';
+import { validateEnv } from '../config/env-validation';
 
 export default {
   /**
@@ -8,6 +9,8 @@ export default {
    * This gives you an opportunity to extend code.
    */
   register({ strapi }) {
+    // Validate environment variables on startup
+    validateEnv();
     // Add custom route to redirect root to admin panel
     strapi.server.routes([
       {
