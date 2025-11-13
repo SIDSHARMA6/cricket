@@ -4,18 +4,22 @@
   "info": {
     "singularName": "match",
     "pluralName": "matches",
-    "displayName": "match"
+    "displayName": "match",
+    "description": "Cricket match scheduling with location and RSVP"
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false,
+    "populateCreatorFields": false
   },
   "pluginOptions": {},
   "attributes": {
     "ground_name": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "date_time": {
-      "type": "datetime"
+      "type": "datetime",
+      "required": true
     },
     "money": {
       "type": "string"
@@ -27,7 +31,85 @@
       "type": "string"
     },
     "total_Players_need": {
-      "type": "integer"
+      "type": "integer",
+      "default": 22
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": true
+    },
+    "players": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user"
+    },
+    "latitude": {
+      "type": "decimal"
+    },
+    "longitude": {
+      "type": "decimal"
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "address": {
+      "type": "text"
+    },
+    "match_type": {
+      "type": "enumeration",
+      "default": "friendly",
+      "enum": [
+        "friendly",
+        "practice",
+        "tournament",
+        "league"
+      ]
+    },
+    "format": {
+      "type": "enumeration",
+      "default": "T20",
+      "enum": [
+        "T20",
+        "ODI",
+        "Test",
+        "Box Cricket",
+        "Tape Ball"
+      ]
+    },
+    "overs": {
+      "type": "integer",
+      "default": 20
+    },
+    "status": {
+      "type": "enumeration",
+      "default": "upcoming",
+      "enum": [
+        "upcoming",
+        "live",
+        "completed",
+        "cancelled"
+      ]
+    },
+    "skill_level_required": {
+      "type": "enumeration",
+      "enum": [
+        "Beginner",
+        "Intermediate",
+        "Advanced",
+        "Professional"
+      ]
+    },
+    "entry_fee": {
+      "type": "decimal",
+      "default": 0
+    },
+    "description": {
+      "type": "text"
     }
   }
 }

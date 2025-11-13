@@ -7,7 +7,8 @@
     "displayName": "story"
   },
   "options": {
-    "draftAndPublish": false
+    "draftAndPublish": false,
+    "populateCreatorFields": false
   },
   "pluginOptions": {},
   "attributes": {

@@ -7,7 +7,8 @@
     "displayName": "Comment"
   },
   "options": {
-    "draftAndPublish": false
+    "draftAndPublish": false,
+    "populateCreatorFields": false
   },
   "pluginOptions": {},
   "attributes": {
@@ -30,6 +31,24 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::story.story"
+    },
+    "liked_by": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user"
+    },
+    "likes_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "replies_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "parent_comment": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::comment.comment"
     }
   }
 }

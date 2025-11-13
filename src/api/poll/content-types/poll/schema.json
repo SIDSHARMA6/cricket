@@ -5,38 +5,40 @@
     "singularName": "poll",
     "pluralName": "polls",
     "displayName": "Poll",
-    "description": "Community polls for cricket discussions"
+    "description": "WhatsApp-style polls with voting"
   },
   "options": {
-    "draftAndPublish": false
+    "draftAndPublish": false,
+    "populateCreatorFields": false
   },
   "pluginOptions": {},
   "attributes": {
     "question": {
       "type": "string",
-      "required": true
+      "required": true,
+      "maxLength": 255
     },
     "options": {
       "type": "json",
-      "required": true,
-      "default": []
-    },
-    "createdBy": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "plugin::users-permissions.user"
+      "required": true
     },
     "votes": {
       "type": "json",
       "default": []
     },
+    "allowMultipleVotes": {
+      "type": "boolean",
+      "default": false
+    },
     "isActive": {
       "type": "boolean",
       "default": true
     },
-    "allowMultipleVotes": {
-      "type": "boolean",
-      "default": false
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": true
     }
   }
 }

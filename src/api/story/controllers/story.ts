@@ -33,8 +33,16 @@ const transformStoryData = (entity: any, currentUserId?: number) => {
 
   return {
     id: entity.id,
-    username: entity.user?.username || 'Unknown User',
-    email: entity.user?.email || '',
+    user: {
+      id: entity.user?.id,
+      username: entity.user?.username || 'Unknown User',
+      email: entity.user?.email || ''
+    },
+    createdBy: {
+      id: entity.createdBy?.id || entity.user?.id,
+      username: entity.createdBy?.username || entity.user?.username || 'Unknown User',
+      email: entity.createdBy?.email || entity.user?.email || ''
+    },
     mediaUrls,
     likesCount: likedBy.length,
     isLiked: isLikedByUser(likedBy, currentUserId),
@@ -85,6 +93,7 @@ export default factories.createCoreController('api::story.story', ({ strapi }) =
         populate: {
           story: true,
           user: USER_POPULATE,
+          createdBy: USER_POPULATE,
         } as any,
       });
 
@@ -172,7 +181,10 @@ export default factories.createCoreController('api::story.story', ({ strapi }) =
         populate: {
           story: true,
           user: {
-            fields: ['username', 'email'],
+            fields: ['id', 'username'],
+          },
+          createdBy: {
+            fields: ['id', 'username'],
           },
           liked_by: {
             fields: ['id'],
@@ -208,7 +220,10 @@ export default factories.createCoreController('api::story.story', ({ strapi }) =
         populate: {
           story: true,
           user: {
-            fields: ['username', 'email'],
+            fields: ['id', 'username'],
+          },
+          createdBy: {
+            fields: ['id', 'username'],
           },
           liked_by: {
             fields: ['id'],
@@ -270,6 +285,7 @@ export default factories.createCoreController('api::story.story', ({ strapi }) =
         populate: {
           story: true,
           user: USER_POPULATE,
+          createdBy: USER_POPULATE,
           liked_by: LIKED_BY_POPULATE,
         } as any,
       });

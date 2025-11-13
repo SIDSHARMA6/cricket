@@ -7,7 +7,8 @@
     "displayName": "post"
   },
   "options": {
-    "draftAndPublish": false
+    "draftAndPublish": false,
+    "populateCreatorFields": false
   },
   "pluginOptions": {},
   "attributes": {
@@ -35,7 +36,6 @@
       "relation": "manyToMany",
       "target": "plugin::users-permissions.user"
     },
-
     "comments": {
       "type": "relation",
       "relation": "oneToMany",
@@ -49,6 +49,29 @@
     "commentCount": {
       "type": "integer",
       "default": 0
+    },
+    "latitude": {
+      "type": "decimal"
+    },
+    "longitude": {
+      "type": "decimal"
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "visibility": {
+      "type": "enumeration",
+      "enum": [
+        "local",
+        "district",
+        "state",
+        "national",
+        "public"
+      ],
+      "default": "public"
     }
   }
 }

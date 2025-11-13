@@ -1,0 +1,63 @@
+{
+  "kind": "collectionType",
+  "collectionName": "group_messages",
+  "info": {
+    "singularName": "group-message",
+    "pluralName": "group-messages",
+    "displayName": "group-message"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "group": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::group.group",
+      "required": true
+    },
+    "sender": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": true
+    },
+    "message": {
+      "type": "richtext",
+      "required": true
+    },
+    "message_type": {
+      "type": "enumeration",
+      "enum": [
+        "text",
+        "image",
+        "video",
+        "voice"
+      ],
+      "default": "text"
+    },
+    "attachments": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "videos",
+        "files"
+      ]
+    },
+    "reply_to": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::group-message.group-message"
+    },
+    "reactions": {
+      "type": "json"
+    },
+    "read_by": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

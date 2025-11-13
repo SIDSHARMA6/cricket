@@ -1,0 +1,79 @@
+{
+  "kind": "collectionType",
+  "collectionName": "player_stats",
+  "info": {
+    "singularName": "player-stat",
+    "pluralName": "player-stats",
+    "displayName": "player-stat"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "player": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": true
+    },
+    "match": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::match.match",
+      "required": true
+    },
+    "runs": {
+      "type": "integer",
+      "default": 0
+    },
+    "balls_faced": {
+      "type": "integer",
+      "default": 0
+    },
+    "fours": {
+      "type": "integer",
+      "default": 0
+    },
+    "sixes": {
+      "type": "integer",
+      "default": 0
+    },
+    "strike_rate": {
+      "type": "decimal"
+    },
+    "dismissal_type": {
+      "type": "string"
+    },
+    "overs": {
+      "type": "decimal"
+    },
+    "maidens": {
+      "type": "integer",
+      "default": 0
+    },
+    "runs_conceded": {
+      "type": "integer",
+      "default": 0
+    },
+    "wickets": {
+      "type": "integer",
+      "default": 0
+    },
+    "economy": {
+      "type": "decimal"
+    },
+    "catches": {
+      "type": "integer",
+      "default": 0
+    },
+    "run_outs": {
+      "type": "integer",
+      "default": 0
+    },
+    "stumpings": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "kind": "collectionType",
+  "collectionName": "teams",
+  "info": {
+    "singularName": "team",
+    "pluralName": "teams",
+    "displayName": "team"
+  },
+  "options": {
+    "draftAndPublish": false,
+    "populateCreatorFields": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "description": {
+      "type": "richtext"
+    },
+    "founded_date": {
+      "type": "date"
+    },
+    "captain": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "players": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user"
+    },
+    "home_ground": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "matches_played": {
+      "type": "integer",
+      "default": 0
+    },
+    "wins": {
+      "type": "integer",
+      "default": 0
+    },
+    "losses": {
+      "type": "integer",
+      "default": 0
+    },
+    "draws": {
+      "type": "integer",
+      "default": 0
+    },
+    "ranking": {
+      "type": "integer"
+    }
+  }
+}
